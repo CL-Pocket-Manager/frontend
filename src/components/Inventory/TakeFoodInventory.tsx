@@ -43,7 +43,10 @@ export default function FoodInventory(props: any) {
       body: JSON.stringify(foodItems),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+        fetchArchive();
+      })
       .catch((error) => console.error("Error:", error));
 
     fetchArchive();

@@ -10,7 +10,7 @@ import TakeFoodInventory from "../../components/Inventory/TakeFoodInventory";
 import Archive from "../../components/Inventory/Archive";
 
 export default function FoodInventory() {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState("1");
   const [food, setFood] = useState([]);
   const [archive, setArchive] = useState([]);
 
@@ -32,7 +32,7 @@ export default function FoodInventory() {
     setFood(data);
   };
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
