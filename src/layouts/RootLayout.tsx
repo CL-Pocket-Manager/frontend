@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";

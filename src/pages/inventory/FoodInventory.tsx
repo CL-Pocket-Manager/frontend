@@ -1,4 +1,3 @@
-import { useLoaderData } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Typorgraphy from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -33,7 +32,7 @@ export default function FoodInventory() {
     setFood(data);
   };
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 

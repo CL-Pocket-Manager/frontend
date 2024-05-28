@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -35,7 +35,7 @@ export default function FoodInventory(props: any) {
 
   const handleSubmit = () => {
     // Send the updated foodItems to the server and save in Archive Collection
-    fetch(`${process.env.API_BASE_URL}/food/archive/create`, {
+    fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/food/archive/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
