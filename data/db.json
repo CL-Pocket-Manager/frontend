@@ -1,0 +1,86 @@
+{
+  "foodInventory": [
+    {
+      "id": 1,
+      "name": "Spiced Nuts",
+      "unit": "quart",
+      "qty/unit": 1,
+      "par": 8
+    },
+    {
+      "id": 2,
+      "name": "French Onion",
+      "unit": "quart",
+      "qty/unit": 1,
+      "par": 6
+    },
+    {
+      "id": 3,
+      "name": "Potato Chips",
+      "unit": "bag",
+      "qty/unit": 1,
+      "par": 4
+    },
+    {
+      "id": 4,
+      "name": "Mixed Olives",
+      "unit": "quart",
+      "qty/unit": 1,
+      "par": 8
+    },
+    {
+      "id": 5,
+      "name": "Focaccia",
+      "unit": "bag",
+      "qty/unit": 24,
+      "par": 2
+    },
+    {
+      "id": 6,
+      "name": "Grilled Cheese",
+      "unit": "count",
+      "qty/unit": 1,
+      "par": 48
+    },
+    {
+      "id": 7,
+      "name": "Tater Tots",
+      "unit": "bag",
+      "qty/unit": 1,
+      "par": 6
+    },
+    {
+      "id": 8,
+      "name": "Fry Spice",
+      "unit": "quart",
+      "qty/unit": 1,
+      "par": 2
+    }
+  ],
+  "beverageInventory": [
+    {
+      "id": 1,
+      "name": "Vodka",
+      "quantity": 20,
+      "unit": "liters"
+    },
+    {
+      "id": 2,
+      "name": "Whiskey",
+      "quantity": 15,
+      "unit": "liters"
+    },
+    {
+      "id": 3,
+      "name": "Red Wine",
+      "quantity": 30,
+      "unit": "bottles"
+    },
+    {
+      "id": 4,
+      "name": "White Wine",
+      "quantity": 25,
+      "unit": "bottles"
+    }
+  ]
+}
