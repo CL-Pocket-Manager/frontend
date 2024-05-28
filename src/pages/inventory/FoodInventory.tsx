@@ -17,14 +17,18 @@ export default function FoodInventory() {
 
   // Get Archive from API call
   const fetchArchive = async () => {
-    const res = await fetch("http://localhost:3000/food/archive");
+    const res = await fetch(
+      `${import.meta.env.VITE_APP_API_BASE_URL}/food/archive`
+    );
     const data = await res.json();
     setArchive(data);
   };
 
   // Get Food Items from API call
   const fetchFoodItems = async () => {
-    const res = await fetch("http://localhost:3000/food/items");
+    const res = await fetch(
+      `${import.meta.env.VITE_APP_API_BASE_URL}/food/items`
+    );
     const data = await res.json();
     setFood(data);
   };
@@ -65,8 +69,3 @@ export default function FoodInventory() {
     </>
   );
 }
-
-// export const foodInvenLoader = async () => {
-//   const res = await fetch("http://localhost:3000/food/items");
-//   return res.json();
-// };

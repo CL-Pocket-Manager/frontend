@@ -35,7 +35,7 @@ export default function FoodInventory(props: any) {
 
   const handleSubmit = () => {
     // Send the updated foodItems to the server and save in Archive Collection
-    fetch("http://localhost:3000/food/archive/create", {
+    fetch(`${process.env.API_BASE_URL}/food/archive/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

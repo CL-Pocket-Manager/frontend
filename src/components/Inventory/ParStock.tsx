@@ -27,13 +27,16 @@ export default function ParStock(props: any) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const response = await fetch("http://localhost:3000/food/item/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newItem),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_APP_API_BASE_URL}/food/item/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      }
+    );
 
     if (!response.ok) {
       console.error("Failed to create new food item");

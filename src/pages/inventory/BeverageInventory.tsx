@@ -18,7 +18,7 @@ export default function BeverageInventory() {
 }
 
 export const bevInvenLoader = async () => {
-  const res = await fetch("http://localhost:4040/beverageInventory");
+  const res = await fetch(`${process.env.API_BASE_URL}/beverageInventory`);
 
   return res.json();
 };
