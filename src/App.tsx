@@ -36,38 +36,6 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  const [isPortrait, setIsPortrait] = useState(
-    window.innerHeight > window.innerWidth
-  );
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  if (isPortrait) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          padding: "0 20px",
-          textAlign: "center",
-        }}
-      >
-        <h1>Please rotate your device</h1>
-      </div>
-    );
-  }
-
   return <RouterProvider router={router} />;
 }
 
