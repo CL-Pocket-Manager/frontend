@@ -4,7 +4,6 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 // pages
 import Home from "./pages/Home";
