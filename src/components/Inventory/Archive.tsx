@@ -1,112 +1,58 @@
-import { useState } from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { Button, Typography } from "@mui/material";
-import Dialog from "@mui/material/Dialog";
+import { useCallback, useState, useEffect } from "react";
+import ArchivedTable from "./ArchivedTable";
+import useEmblaCarousel from "embla-carousel-react";
+import { EmblaOptionsType } from "embla-carousel";
+import { EmblaCarouselType } from "embla-carousel";
+import { IconButton } from "@mui/material";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
-export default function Archive(props: { item: any }) {
-  const { item } = props;
-  const [open, setOpen] = useState(false);
+export default function Archive(props: { archiveData: any }) {
+  const { archiveData } = props;
+  const options: EmblaOptionsType = { startIndex: archiveData.length - 1 };
+  const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+
+  const onPrevButtonClick = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const onNextButtonClick = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev());
+    setNextBtnDisabled(!emblaApi.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    onSelect(emblaApi);
+    emblaApi.on("reInit", onSelect).on("select", onSelect);
+  }, [emblaApi, onSelect]);
+
+  const archivedTables = archiveData.map((archive: any) => {
+    return <ArchivedTable key={archive._id} archive={archive} />;
+  });
+
   return (
     <>
-      <Typography align="center" variant="h5">
-        {new Date(item.date).toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-      </Typography>
-      <Button onClick={handleOpen}>View Details</Button>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 600 }}>Food Item</TableCell>
-              <TableCell sx={{ fontWeight: 600 }} align="right">
-                Unit
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600 }} align="right">
-                Qty/Unit
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600 }} align="right">
-                Need
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {item.archive.map(
-              (item: any) =>
-                item.stock < item.par && (
-                  <TableRow
-                    key={item._id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {item.name}
-                    </TableCell>
-                    <TableCell align="right">{item.unit}</TableCell>
-                    <TableCell align="right">{item.qtyPerUnit}</TableCell>
-                    <TableCell align="right">{item.par - item.stock}</TableCell>
-                  </TableRow>
-                )
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="md"
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Food Item</TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Unit
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Qty/Unit
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Par
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600 }} align="right">
-                  Stock
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {item.archive.map((item: any) => (
-                <TableRow
-                  key={item._id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {item.name}
-                  </TableCell>
-                  <TableCell align="right">{item.unit}</TableCell>
-                  <TableCell align="right">{item.qtyPerUnit}</TableCell>
-                  <TableCell align="right">{item.par}</TableCell>
-                  <TableCell align="right">{item.stock}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Dialog>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <IconButton onClick={onPrevButtonClick} disabled={prevBtnDisabled}>
+          <ArrowBack />
+        </IconButton>
+        <IconButton onClick={onNextButtonClick} disabled={nextBtnDisabled}>
+          <ArrowForward />
+        </IconButton>
+      </div>
+      <div style={{ overflow: "hidden" }} ref={emblaRef}>
+        <div style={{ display: "flex" }}>{archivedTables}</div>
+      </div>
     </>
   );
 }
