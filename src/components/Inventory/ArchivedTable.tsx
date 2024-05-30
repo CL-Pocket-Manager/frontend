@@ -17,10 +17,7 @@ export default function ArchivedTable(props: any) {
   const { archive } = props;
 
   return (
-    <TableContainer
-      sx={{ flex: "0 0 100%", minWidth: 0, border: "solid 2px red" }}
-      component={Paper}
-    >
+    <TableContainer sx={{ flex: "0 0 100%", minWidth: 0 }} component={Paper}>
       <Typography align="center" variant="h5">
         {new Date(archive.date).toLocaleDateString("en-US", {
           weekday: "long",
