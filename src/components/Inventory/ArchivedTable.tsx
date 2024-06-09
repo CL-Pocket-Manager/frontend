@@ -9,12 +9,22 @@ import TableRow from "@mui/material/TableRow";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import ReportTable from "../../utils/ReportTable";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 export default function ArchivedTable(props: any) {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
   const { archive } = props;
+
+  const shortDate = new Date(archive.date)
+    .toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    })
+    .replace(/\//g, "_");
 
   return (
     <TableContainer sx={{ flex: "0 0 100%", minWidth: 0 }} component={Paper}>
@@ -26,7 +36,15 @@ export default function ArchivedTable(props: any) {
           day: "numeric",
         })}
       </Typography>
-      <Button onClick={handleOpen}>View Details</Button>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Button onClick={handleOpen}>View Details</Button>
+        <PDFDownloadLink
+          document={<ReportTable data={archive} />}
+          fileName={`Bk_Food_${shortDate}.pdf`}
+        >
+          <Button>Download</Button>
+        </PDFDownloadLink>
+      </div>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
