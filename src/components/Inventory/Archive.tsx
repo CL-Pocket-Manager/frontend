@@ -8,6 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Button, Typography } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
+import ReportTable from "../../utils/ReportTable";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 export default function Archive(props: { item: any }) {
   const { item } = props;
@@ -15,6 +17,7 @@ export default function Archive(props: { item: any }) {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   return (
     <>
       <Typography align="center" variant="h5">
@@ -26,6 +29,12 @@ export default function Archive(props: { item: any }) {
         })}
       </Typography>
       <Button onClick={handleOpen}>View Details</Button>
+      <PDFDownloadLink
+        document={<ReportTable data={item.archive} />}
+        fileName="report.pdf"
+      >
+        <Button>Download</Button>
+      </PDFDownloadLink>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
