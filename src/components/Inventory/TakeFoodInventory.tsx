@@ -9,9 +9,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 export default function FoodInventory(props: any) {
-  const { food, setOpen, fetchArchive } = props;
+  const { food, fetchArchive } = props;
+  const [open, setOpen] = useState(false);
   const [foodItems, setFoodItems] = useState(
     food.map((item: any) => ({ ...item, stock: 0 }))
   );
@@ -34,6 +40,7 @@ export default function FoodInventory(props: any) {
   };
 
   const handleSubmit = () => {
+    setOpen(true);
     // Send the updated foodItems to the server and save in Archive Collection
     fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/food/archive/create`, {
       method: "POST",
@@ -51,7 +58,6 @@ export default function FoodInventory(props: any) {
 
     fetchArchive();
     setFoodItems(food.map((item: any) => ({ ...item, stock: 0 }))); // Reset stock values
-    setOpen(false);
   };
 
   return (
@@ -111,6 +117,17 @@ export default function FoodInventory(props: any) {
       >
         Submit
       </Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Inventory Submitted</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Inventory has been submitted successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
