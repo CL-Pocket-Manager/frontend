@@ -62,7 +62,11 @@ export default function FoodInventory() {
           {archive && <Archive archiveData={archive} />}
         </TabPanel>
         <TabPanel value="3">
-          <TakeFoodInventory food={food} fetchArchive={fetchArchive} />
+          <TakeFoodInventory
+            food={food}
+            fetchArchive={fetchArchive}
+            archive={archive}
+          />
         </TabPanel>
       </TabContext>
     </>

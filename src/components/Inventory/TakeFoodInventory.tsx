@@ -14,9 +14,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ReportTable from "../../utils/ReportTable";
 
 export default function FoodInventory(props: any) {
-  const { food, fetchArchive } = props;
+  const { food, fetchArchive, archive } = props;
+  const [fetchComplete, setFetchComplete] = useState(false);
   const [open, setOpen] = useState(false);
   const [foodItems, setFoodItems] = useState(
     food.map((item: any) => ({ ...item, stock: 0 }))
@@ -54,11 +57,16 @@ export default function FoodInventory(props: any) {
         console.log(data);
         fetchArchive();
       })
+      .then(() => {
+        setFetchComplete(true); // Set fetchComplete to true after fetch operation and any subsequent operations are complete
+      })
       .catch((error) => console.error("Error:", error));
 
     fetchArchive();
     setFoodItems(food.map((item: any) => ({ ...item, stock: 0 }))); // Reset stock values
   };
+
+  console.log(archive[archive.length - 1].date);
 
   return (
     <>
@@ -126,6 +134,16 @@ export default function FoodInventory(props: any) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Close</Button>
+          {fetchComplete && (
+            <PDFDownloadLink
+              document={<ReportTable data={archive[archive.length - 1]} />}
+              fileName={`Bk_Food_${
+                archive[archive.length - 1].date.split("T")[0]
+              }.pdf`}
+            >
+              <Button>Download</Button>
+            </PDFDownloadLink>
+          )}
         </DialogActions>
       </Dialog>
     </>
