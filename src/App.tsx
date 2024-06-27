@@ -8,6 +8,8 @@ import {
 // pages
 import Home from "./pages/Home";
 import About from "./pages/About";
+import Items from "./pages/Items";
+import ItemDetail from "./pages/ItemDetail";
 
 // layouts
 import RootLayout from "./layouts/RootLayout";
@@ -30,6 +32,8 @@ const router = createBrowserRouter(
           loader={bevInvenLoader}
         />
       </Route>
+      <Route path="items" element={<Items />} />
+      <Route path="items/:id" element={<ItemDetail />} />
     </Route>
   )
 );

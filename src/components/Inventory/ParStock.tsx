@@ -13,6 +13,8 @@ import Box from "@mui/material/Box";
 export default function ParStock(props: any) {
   const { food, fetchFoodItems } = props;
   const [editMode, setEditMode] = useState(false);
+  const [editItemId, setEditItemId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState<any>({});
   const [newItem, setNewItem] = useState({
     name: "",
     unit: "",
@@ -22,6 +24,32 @@ export default function ParStock(props: any) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewItem({ ...newItem, [event.target.name]: event.target.value });
+  };
+
+  const handleEditClick = (item: any) => {
+    setEditItemId(item._id);
+    setEditFormData({
+      name: item.name,
+      unit: item.unit,
+      qtyPerUnit: item.qtyPerUnit,
+      par: item.par,
+    });
+  };
+
+  const handleSaveClick = () => {
+    // Update the food item in your state or backend
+    const updatedFoodItems = food.map((item: any) => {
+      if (item._id === editItemId) {
+        return { ...item, ...editFormData };
+      }
+      return item;
+    });
+    console.log(updatedFoodItems);
+    setEditItemId(null); // Exit edit mode
+  };
+
+  const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -85,12 +113,61 @@ export default function ParStock(props: any) {
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
-                <TableCell component="th" scope="row">
-                  {item.name}
-                </TableCell>
-                <TableCell align="right">{item.unit}</TableCell>
-                <TableCell align="right">{item.qtyPerUnit}</TableCell>
-                <TableCell align="right">{item.par}</TableCell>
+                {editItemId === item._id ? (
+                  <>
+                    <TableCell component="th" scope="row">
+                      <TextField
+                        name="name"
+                        value={editFormData.name}
+                        onChange={handleUpdate}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextField
+                        name="unit"
+                        value={editFormData.unit}
+                        onChange={handleUpdate}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextField
+                        name="qtyPerUnit"
+                        value={editFormData.qtyPerUnit}
+                        onChange={handleUpdate}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <TextField
+                        name="par"
+                        value={editFormData.par}
+                        onChange={handleUpdate}
+                      />
+                    </TableCell>
+
+                    <Button
+                      style={{ position: "absolute" }}
+                      onClick={handleSaveClick}
+                    >
+                      Save
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <TableCell component="th" scope="row">
+                      {item.name}
+                    </TableCell>
+                    <TableCell align="right">{item.unit}</TableCell>
+                    <TableCell align="right">{item.qtyPerUnit}</TableCell>
+                    <TableCell align="right">{item.par}</TableCell>
+
+                    <Button
+                      style={{ position: "absolute" }}
+                      onClick={() => handleEditClick(item)}
+                    >
+                      Edit
+                    </Button>
+                  </>
+                )}
               </TableRow>
             ))}
             {editMode && (

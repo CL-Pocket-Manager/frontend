@@ -38,6 +38,14 @@ export default function RootLayout() {
             >
               Inventory
             </Link>
+            <Link
+              component={NavLink}
+              underline="none"
+              color={"#fff"}
+              to={"items"}
+            >
+              Items
+            </Link>
           </Toolbar>
         </Container>
       </AppBar>
