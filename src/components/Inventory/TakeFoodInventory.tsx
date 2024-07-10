@@ -24,8 +24,8 @@ export default function FoodInventory(props: any) {
     food.map((item: any) => ({ ...item, stock: 0 }))
   );
 
-  const handleDecreaseStock = (id) => {
-    const updatedItems = foodItems.map((item) => {
+  const handleDecreaseStock = (id: any) => {
+    const updatedItems = foodItems.map((item: any) => {
       if (item._id === id && item.stock > 0) {
         return { ...item, stock: item.stock - 1 };
       }
@@ -34,8 +34,8 @@ export default function FoodInventory(props: any) {
     setFoodItems(updatedItems);
   };
 
-  const handleIncreaseStock = (id) => {
-    const updatedItems = foodItems.map((item) => {
+  const handleIncreaseStock = (id: any) => {
+    const updatedItems = foodItems.map((item: any) => {
       if (item._id === id) {
         return { ...item, stock: item.stock + 1 };
       }
