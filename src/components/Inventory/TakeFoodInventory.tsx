@@ -14,12 +14,21 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ReportTable from "../../utils/ReportTable";
 
 export default function FoodInventory(props: any) {
-  const { food, setOpen, fetchArchive } = props;
+  const { food, fetchArchive, archive } = props;
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [fetchComplete, setFetchComplete] = useState(false);
+  const [open, setOpen] = useState(false);
   const [foodItems, setFoodItems] = useState(
     food.map((item: any) => ({ ...item, stock: 0 }))
   );
@@ -62,6 +71,7 @@ export default function FoodInventory(props: any) {
   };
 
   const handleSubmit = () => {
+    setOpen(true);
     // Send the updated foodItems to the server and save in Archive Collection
     fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/food/archive/create`, {
       method: "POST",
@@ -75,12 +85,16 @@ export default function FoodInventory(props: any) {
         console.log(data);
         fetchArchive();
       })
+      .then(() => {
+        setFetchComplete(true); // Set fetchComplete to true after fetch operation and any subsequent operations are complete
+      })
       .catch((error) => console.error("Error:", error));
 
     fetchArchive();
     setFoodItems(food.map((item: any) => ({ ...item, stock: 0 }))); // Reset stock values
-    setOpen(false);
   };
+
+  console.log(archive[archive.length - 1].date);
 
   return (
     <>
@@ -195,6 +209,27 @@ export default function FoodInventory(props: any) {
       >
         Submit
       </Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Inventory Submitted</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Inventory has been submitted successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+          {fetchComplete && (
+            <PDFDownloadLink
+              document={<ReportTable data={archive[archive.length - 1]} />}
+              fileName={`Bk_Food_${
+                archive[archive.length - 1].date.split("T")[0]
+              }.pdf`}
+            >
+              <Button>Download</Button>
+            </PDFDownloadLink>
+          )}
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

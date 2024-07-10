@@ -59,10 +59,14 @@ export default function FoodInventory() {
           <ParStock food={food} fetchFoodItems={fetchFoodItems} />
         </TabPanel>
         <TabPanel value="2">
-          {archive.length > 0 && <Archive item={archive[archive.length - 1]} />}
+          {archive && <Archive archiveData={archive} />}
         </TabPanel>
         <TabPanel value="3">
-          <TakeFoodInventory food={food} fetchArchive={fetchArchive} />
+          <TakeFoodInventory
+            food={food}
+            fetchArchive={fetchArchive}
+            archive={archive}
+          />
         </TabPanel>
       </TabContext>
     </>
