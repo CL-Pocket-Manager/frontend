@@ -5,80 +5,175 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import { fetchAllItemsShort } from "../../api/itemsApi";
+import InventoryItemForm from "../Forms/InventoryItemForm";
+import ItemForm from "../Forms/ItemForm";
 
-export default function CreateItem(props: any) {
+export default function AddItem(props: any) {
   const { open, setOpen } = props;
+  const [activeStep, setActiveStep] = useState(0);
+  const [value, setValue] = useState<BaseItem | null>({
+    _id: "",
+    name: "",
+  });
+  const [allItems, setAllItems] = useState<BaseItem[]>([]);
+  const [itemData, setItemData] = useState({
+    item: "",
+    onModel: "",
+    unitOfMeasure: "",
+    qtyPerUnit: 0,
+    costPerUnit: 0,
+    distributor: "",
+    par: 0,
+    stock: 0,
+  });
 
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [newItemData, setNewItemData] = useState({
+    name: value?.inputValue || "",
+    image: "",
+    description: "",
+    itemType: "",
+    alcoholType: "",
+    alcoholContent: 0,
+  });
+
+  useEffect(() => {
+    if (value) {
+      setNewItemData({
+        ...newItemData,
+        name: value.inputValue || value.name,
+      });
+    }
+  }, [value]);
+
+  const steps = ["Inventory Item", "Add Item"];
+
+  const handleClose = () => {
+    setOpen(false);
+    setTimeout(() => {
+      setActiveStep(0);
+    }, 500);
+  };
+
+  function _renderStepContent(step: number) {
+    switch (step) {
+      case 0:
+        return (
+          <>
+            <InventoryItemForm
+              itemData={itemData}
+              setItemData={setItemData}
+              allItems={allItems}
+              setActiveStep={setActiveStep}
+              value={value}
+              setValue={setValue}
+            />
+            <Button onClick={handleFormSubmit}>Submit</Button>
+          </>
+        );
+      case 1:
+        return (
+          <>
+            <ItemForm
+              isNew={true}
+              itemData={newItemData}
+              setItemData={setNewItemData}
+            />
+            <Button onClick={handleItemCreate}>Create</Button>
+          </>
+        );
+      default:
+        return <div>Not Found</div>;
+    }
+  }
+
+  const handleNext = () => {
+    setActiveStep(1);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setItemData({ ...itemData, [name]: value });
+  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // if (value && value.inputValue) {
+    //   try {
+    //     const newItem = await createNewItemInDb(value.inputValue);
+
+    //     setItemData(prevItemData => ({
+    //       ...prevItemData,
+    //       item: newItem._id,
+    //     }));
+
+    //     await createNewInventoryItem(itemData);
+
+    //   } catch (error) {
+    //     console.error("Error creating new item", error);
+    //   }
+    // }
+    // else {
+    //   try {
+    //     await createNewInventoryItem(itemData);
+    //   } catch (error) {
+    //     console.error("Error creating new inventory item", error);
+    // }
+
     console.log("Form submitted");
     setOpen(false);
   };
 
+  const handleItemCreate = () => {
+    console.log("Item created");
+    setOpen(false);
+  };
+
+  // useEffect(() => {
+  //   if (!value) {
+  //     return;
+  //   }
+  //   setItemData({
+  //     ...itemData,
+  //     item: value.inputValue ? value.inputValue : value._id,
+  //   });
+  // }, [value]);
+
   useEffect(() => {
-    const loadSuggestions = async () => {
-      if (!inputValue) return setSuggestions([]);
-      try {
-        const response = await fetch(`/search-items?term=${inputValue}`);
-        if (!response.ok) throw new Error("Network response was not ok.");
-        const data = await response.json();
-        setSuggestions(data);
-      } catch (error) {
-        console.error("Error fetching items:", error);
-      }
+    const fetchData = async () => {
+      const data = await fetchAllItemsShort();
+      setAllItems(data);
     };
 
-    loadSuggestions();
-  }, [inputValue]);
+    fetchData();
+  }, []);
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <form onSubmit={handleFormSubmit}>
-        <DialogTitle>New Item</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Item"
-            name="Item"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            required
-          />
-          <TextField
-            label="Image URL"
-            name="image"
-            value={newItem.image}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            type="url"
-          />
-          <TextField
-            label="Description"
-            name="description"
-            value={newItem.description}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            variant="outlined"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button type="submit" onSubmit={handleFormSubmit}>
-            Submit
-          </Button>
-        </DialogActions>
-      </form>
+      <Stepper activeStep={activeStep}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      {_renderStepContent(activeStep)}
+      <DialogActions>
+        <Button onClick={() => setOpen(false)}>Cancel</Button>
+        <Button onClick={handleNext}>Next</Button>
+      </DialogActions>
     </Dialog>
   );
+}
+
+interface BaseItem {
+  _id: string;
+  name: string;
+  inputValue?: string;
 }

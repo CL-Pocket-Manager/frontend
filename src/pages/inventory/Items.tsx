@@ -9,10 +9,12 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import AddItem from "../../components/Inventory/AddItem";
 
 export default function Items(props: any) {
   const { items } = props;
   const [editMode, setEditMode] = useState(false);
+  const [addItem, setAddItem] = useState(false);
   const [editItemId, setEditItemId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<any>({});
   const [newItem, setNewItem] = useState({
@@ -24,6 +26,11 @@ export default function Items(props: any) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewItem({ ...newItem, [event.target.name]: event.target.value });
+  };
+
+  const handleAddItem = () => {
+    setAddItem(true);
+    console.log(addItem);
   };
 
   const handleEditClick = (item: any) => {
@@ -210,7 +217,8 @@ export default function Items(props: any) {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button>Add Item</Button>
+      <Button onClick={handleAddItem}>Add Item</Button>
+      <AddItem open={addItem} setOpen={setAddItem} />
     </Box>
   );
 }

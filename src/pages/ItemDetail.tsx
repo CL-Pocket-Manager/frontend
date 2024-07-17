@@ -7,8 +7,8 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
-import EditItem from "../components/Items/EditItem";
 import DeleteItem from "../components/Items/DeleteItem";
+import EditItem from "../components/Items/EditItem";
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -72,7 +72,12 @@ export default function ItemDetail() {
           </CardActions>
         </CardContent>
       </Card>
-      <EditItem editOpen={editOpen} setEditOpen={setEditOpen} item={item} />
+      <EditItem
+        open={editOpen}
+        setEditOpen={setEditOpen}
+        itemData={item}
+        setItemData={setItem}
+      />
       <DeleteItem
         deleteOpen={deleteOpen}
         setDeleteOpen={setDeleteOpen}

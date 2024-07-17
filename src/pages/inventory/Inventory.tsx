@@ -10,7 +10,6 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import Button from "@mui/material/Button";
 import InventorySelect from "../../components/Nav/InventorySelect";
 import CreateInventory from "../../components/Inventory/CreateInventory";
 import Items from "./Items";

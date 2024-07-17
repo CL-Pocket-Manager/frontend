@@ -1,5 +1,6 @@
 import { Button, Container } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import ItemForm from "../components/Items/ItemForm";
 import CreateItem from "../components/Items/CreateItem";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -33,7 +34,6 @@ export default function Items() {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell align="right">Type</TableCell>
-              <TableCell align="right">Distributor</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
