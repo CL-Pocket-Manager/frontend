@@ -26,3 +26,17 @@ export const createInventory = async (inventoryName: string) => {
   const data = await res.json();
   return data;
 };
+
+// Add Item to Inventory
+export const addItemToInventory = async (inventoryId: string, item: any) => {
+  console.log(inventoryId, item);
+  const res = await fetch(`${BASE_URL}/inventory/${inventoryId}/add-item`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(item),
+  });
+  const data = await res.json();
+  return data;
+};

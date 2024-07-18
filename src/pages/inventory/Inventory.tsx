@@ -84,7 +84,7 @@ export default function Inventory() {
             </TabList>
           </Box>
           <TabPanel value="1">
-            <Items items={currentInventory.items} />
+            <Items inventory={currentInventory} />
           </TabPanel>
           <TabPanel value="2">
             {archive && <Archive archiveData={archive} />}

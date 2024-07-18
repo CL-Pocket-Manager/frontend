@@ -29,7 +29,7 @@ export default function ItemForm(props: any) {
 
   return (
     <form>
-      <Typography>{isNew ? "Create Item" : "Edit Item"}</Typography>
+      <Typography>{isNew ? "Create New Item" : "Edit Item"}</Typography>
 
       <TextField
         label="Name"

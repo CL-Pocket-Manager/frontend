@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,9 +10,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import AddItem from "../../components/Inventory/AddItem";
+import { fetchAllItemsShort } from "../../api/itemsApi";
 
 export default function Items(props: any) {
-  const { items } = props;
+  const { inventory } = props;
+  const inventoryItems = inventory.items;
+  const [itemDict, setItemDict] = useState<any>({});
   const [editMode, setEditMode] = useState(false);
   const [addItem, setAddItem] = useState(false);
   const [editItemId, setEditItemId] = useState<string | null>(null);
@@ -23,6 +26,19 @@ export default function Items(props: any) {
     qtyPerUnit: 0,
     par: 0,
   });
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const items = await fetchAllItemsShort();
+      const dictionary = items.reduce((acc: any, item: any) => {
+        acc[item._id] = item.name;
+        return acc;
+      }, {});
+      setItemDict(dictionary);
+    };
+
+    fetchItems();
+  }, [inventory]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewItem({ ...newItem, [event.target.name]: event.target.value });
@@ -45,7 +61,7 @@ export default function Items(props: any) {
 
   const handleSaveClick = () => {
     // Update the item in your state or backend
-    const updatedItems = items.map((item: any) => {
+    const updatedItems = inventoryItems.map((item: any) => {
       if (item._id === editItemId) {
         return { ...item, ...editFormData };
       }
@@ -89,6 +105,7 @@ export default function Items(props: any) {
       par: 0,
     });
   };
+
   return (
     <Box display="flex" flexDirection="column" alignItems="flex-start">
       <Button onClick={() => setEditMode(!editMode)}>
@@ -111,7 +128,7 @@ export default function Items(props: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item: any) => (
+            {inventoryItems.map((item: any) => (
               <TableRow
                 key={item._id}
                 sx={{
@@ -159,9 +176,9 @@ export default function Items(props: any) {
                 ) : (
                   <>
                     <TableCell component="th" scope="row">
-                      {item.name}
+                      {itemDict[item.item]}
                     </TableCell>
-                    <TableCell align="right">{item.unit}</TableCell>
+                    <TableCell align="right">{item.unitOfMeasure}</TableCell>
                     <TableCell align="right">{item.qtyPerUnit}</TableCell>
                     <TableCell align="right">{item.par}</TableCell>
 
@@ -218,7 +235,7 @@ export default function Items(props: any) {
         </Table>
       </TableContainer>
       <Button onClick={handleAddItem}>Add Item</Button>
-      <AddItem open={addItem} setOpen={setAddItem} />
+      <AddItem open={addItem} setOpen={setAddItem} inventory={inventory} />
     </Box>
   );
 }

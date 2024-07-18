@@ -1,21 +1,23 @@
 import { useState, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
-import Button from "@mui/material/Button";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import { fetchAllItemsShort } from "../../api/itemsApi";
+import {
+  fetchAllItemsShort,
+  createAlcoholicItem,
+  createItem,
+} from "../../api/itemsApi";
+import { addItemToInventory } from "../../api/inventoryApi";
 import InventoryItemForm from "../Forms/InventoryItemForm";
 import ItemForm from "../Forms/ItemForm";
+import { Typography } from "@mui/material";
 
 export default function AddItem(props: any) {
-  const { open, setOpen } = props;
+  const { open, setOpen, inventory } = props;
   const [activeStep, setActiveStep] = useState(0);
+  let newItem: any = null;
   const [value, setValue] = useState<BaseItem | null>({
     _id: "",
     name: "",
@@ -43,9 +45,14 @@ export default function AddItem(props: any) {
 
   useEffect(() => {
     if (value) {
+      console.log(value);
       setNewItemData({
         ...newItemData,
         name: value.inputValue || value.name,
+      });
+      setItemData({
+        ...itemData,
+        item: value._id,
       });
     }
   }, [value]);
@@ -64,6 +71,7 @@ export default function AddItem(props: any) {
       case 0:
         return (
           <>
+            <Typography>Add Item to Inventory</Typography>
             <InventoryItemForm
               itemData={itemData}
               setItemData={setItemData}
@@ -78,6 +86,7 @@ export default function AddItem(props: any) {
       case 1:
         return (
           <>
+            <Button onClick={() => setActiveStep(0)}>Back</Button>
             <ItemForm
               isNew={true}
               itemData={newItemData}
@@ -91,59 +100,40 @@ export default function AddItem(props: any) {
     }
   }
 
-  const handleNext = () => {
-    setActiveStep(1);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-    setItemData({ ...itemData, [name]: value });
-  };
-
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // if (value && value.inputValue) {
-    //   try {
-    //     const newItem = await createNewItemInDb(value.inputValue);
-
-    //     setItemData(prevItemData => ({
-    //       ...prevItemData,
-    //       item: newItem._id,
-    //     }));
-
-    //     await createNewInventoryItem(itemData);
-
-    //   } catch (error) {
-    //     console.error("Error creating new item", error);
-    //   }
-    // }
-    // else {
-    //   try {
-    //     await createNewInventoryItem(itemData);
-    //   } catch (error) {
-    //     console.error("Error creating new inventory item", error);
-    // }
-
-    console.log("Form submitted");
+    try {
+      addItemToInventory(inventory._id, itemData);
+      console.log("Item added to inventory");
+    } catch (error) {
+      console.error(error);
+    }
     setOpen(false);
   };
 
-  const handleItemCreate = () => {
+  const handleItemCreate = async () => {
+    try {
+      if (newItemData.itemType === "Alcoholic Beverage") {
+        newItem = await createAlcoholicItem(newItemData);
+      } else {
+        newItem = await createItem(newItemData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
     console.log("Item created");
-    setOpen(false);
+    setActiveStep(0);
   };
 
-  // useEffect(() => {
-  //   if (!value) {
-  //     return;
-  //   }
-  //   setItemData({
-  //     ...itemData,
-  //     item: value.inputValue ? value.inputValue : value._id,
-  //   });
-  // }, [value]);
+  useEffect(() => {
+    if (newItem) {
+      let newItemID = newItem._id;
+      setItemData((prevItemData) => ({
+        ...prevItemData,
+        item: newItemID,
+      }));
+    }
+  }, [newItem]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -156,18 +146,14 @@ export default function AddItem(props: any) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      {_renderStepContent(activeStep)}
-      <DialogActions>
-        <Button onClick={() => setOpen(false)}>Cancel</Button>
-        <Button onClick={handleNext}>Next</Button>
-      </DialogActions>
+      <DialogContent>
+        <Stepper activeStep={activeStep}>
+          {steps.map((label) => (
+            <Step key={label}>{/* <StepLabel>{label}</StepLabel> */}</Step>
+          ))}
+        </Stepper>
+        {_renderStepContent(activeStep)}
+      </DialogContent>
     </Dialog>
   );
 }

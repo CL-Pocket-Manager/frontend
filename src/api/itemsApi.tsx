@@ -14,6 +14,13 @@ export const fetchAllItemsShort = async () => {
   return data;
 };
 
+// GET Item by ID with just the name and id
+export const fetchItemByIdShort = async (id: string) => {
+  const res = await fetch(`${BASE_URL}/items/${id}/short`);
+  const data = await res.json();
+  return data;
+};
+
 // GET Items by Keyword
 export const searchItemsByKeyword = async (keyword: string) => {
   const res = await fetch(`${BASE_URL}/items/search/${keyword}`);
