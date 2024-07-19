@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { fetchItemById } from "../../api/itemsApi";
 import { getItemFromInventory } from "../../api/inventoryApi";
+import EditInventoryItem from "../../components/Inventory/EditInventoryItem";
+import DeleteInventoryItem from "../../components/Inventory/DeleteInventoryItem";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Box, Button, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -26,6 +29,7 @@ export default function InventoryItemDetail() {
   const [inventoryItem, setInventoryItem] = useState<any>({});
 
   const [editMode, setEditMode] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +51,10 @@ export default function InventoryItemDetail() {
     setEditMode(true);
   };
 
+  const handleDelete = () => {
+    setDeleteMode(true);
+  };
+
   return (
     <>
       {itemDetail ? (
@@ -55,8 +63,8 @@ export default function InventoryItemDetail() {
             <Button onClick={() => navigate(-1)} variant="contained">
               <ArrowBackIosNewIcon />
             </Button>
-            <Button onClick={handleEdit} variant="contained">
-              <EditIcon />
+            <Button onClick={handleDelete} variant="contained">
+              <DeleteForeverIcon />
             </Button>
           </div>
           <Typography variant="h3" textAlign={"center"}>
@@ -75,7 +83,7 @@ export default function InventoryItemDetail() {
               border: "2px solid #999",
             }}
           />
-          <Accordion>
+          <Accordion sx={{ border: "2px solid #999" }}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -85,29 +93,90 @@ export default function InventoryItemDetail() {
             </AccordionSummary>
             <AccordionDetails>{itemDetail.description}</AccordionDetails>
           </Accordion>
-          <Typography variant="h6" textAlign={"center"}>
-            Unit: {inventoryItem.unitOfMeasure}
-          </Typography>
-          <Typography variant="h6" textAlign={"center"}>
-            Quantity: {inventoryItem.qtyPerUnit}
-          </Typography>
-          <Typography variant="h6" textAlign={"center"}>
-            Par: {inventoryItem.par}
-          </Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              marginTop: "10px",
+            }}
+          >
+            <div
+              style={{
+                border: "2px solid #999",
+                borderRadius: "6px",
+                padding: "4px 8px",
+              }}
+            >
+              <Typography variant="h6" textAlign={"center"}>
+                Par: {inventoryItem.par}
+              </Typography>
+            </div>
+            <div
+              style={{
+                border: "2px solid #999",
+                borderRadius: "6px",
+                padding: "4px 8px",
+              }}
+            >
+              <Typography variant="h6" textAlign={"center"}>
+                Stock: {inventoryItem.stock}
+              </Typography>
+            </div>
+            <Button onClick={handleEdit} variant="contained">
+              <EditIcon />
+            </Button>
+          </div>
           {itemDetail.itemType === "Alcoholic Beverage" ? (
-            <>
-              <Typography variant="h6" textAlign={"center"}>
-                Alcohol Type: {itemDetail.alcoholType}
-              </Typography>
-              <Typography variant="h6" textAlign={"center"}>
-                Alcohol Content: {itemDetail.alcoholContent}
-              </Typography>
-            </>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "10px",
+                gap: "10px",
+              }}
+            >
+              <div
+                style={{
+                  border: "2px solid #999",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                }}
+              >
+                <Typography variant="h6" textAlign={"center"}>
+                  Alcohol Type: {itemDetail.alcoholType}
+                </Typography>
+              </div>
+              <div
+                style={{
+                  border: "2px solid #999",
+                  borderRadius: "6px",
+                  padding: "4px 8px",
+                }}
+              >
+                <Typography variant="h6" textAlign={"center"}>
+                  Alcohol Content: {itemDetail.alcoholContent}
+                </Typography>
+              </div>
+            </div>
           ) : (
             <Typography variant="h6" textAlign={"center"}>
               Type: {itemDetail.itemType}
             </Typography>
           )}
+          <EditInventoryItem
+            open={editMode}
+            setOpen={setEditMode}
+            name={itemDetail.name}
+            inventory={inventoryId}
+            inventoryItemData={inventoryItem}
+            setInventoryItemData={setInventoryItem}
+          />
+          <DeleteInventoryItem
+            open={deleteMode}
+            setOpen={setDeleteMode}
+            itemId={itemId}
+            inventoryId={inventoryId}
+          />
         </Box>
       ) : (
         <h1>Loading...</h1>

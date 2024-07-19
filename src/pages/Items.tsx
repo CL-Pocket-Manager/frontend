@@ -52,7 +52,6 @@ export default function Items() {
                   </TableCell>
                 </Link>
                 <TableCell align="right">{item.itemType}</TableCell>
-                <TableCell align="right">{item.distributor}</TableCell>
               </TableRow>
             ))}
           </TableBody>

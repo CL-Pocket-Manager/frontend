@@ -6,7 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 
 export default function InventorySelect(props: any) {
-  const { inventoryList, fetchInventoryById } = props;
+  const { inventoryList, fetchInventoryById, getInventoryById } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const open = Boolean(anchorEl);
@@ -20,7 +20,7 @@ export default function InventorySelect(props: any) {
   ) => {
     setSelectedIndex(index);
     setAnchorEl(null);
-    fetchInventoryById(inventoryList[selectedIndex]._id);
+    getInventoryById(inventoryList[selectedIndex]._id);
   };
 
   const handleClose = () => {
@@ -58,7 +58,6 @@ export default function InventorySelect(props: any) {
         {inventoryList.map((inventory: any, index: any) => (
           <MenuItem
             key={inventory._id}
-            disabled={index === 0}
             selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >

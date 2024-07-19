@@ -10,16 +10,21 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import Button from "@mui/material/Button";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import InventorySelect from "../../components/Nav/InventorySelect";
 import CreateInventory from "../../components/Inventory/CreateInventory";
 import Items from "./Items";
 import Archive from "../../components/Inventory/Archive";
+import DeleteInventory from "../../components/Inventory/DeleteInventory";
 
 export default function Inventory() {
   const [value, setValue] = useState("1");
   const [inventoryList, setInventoryList] = useState<any[]>([]);
   const [currentInventory, setCurrentInventory] = useState<any>({});
   const [archive, setArchive] = useState([]);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   // Get Archive from API call
   const fetchArchive = async () => {
@@ -28,6 +33,10 @@ export default function Inventory() {
     );
     const data = await res.json();
     setArchive(data);
+  };
+
+  const handleDeleteOpen = () => {
+    setDeleteOpen(true);
   };
 
   // Get Inventories
@@ -62,17 +71,22 @@ export default function Inventory() {
     }
   }, [inventoryList]); // This useEffect runs whenever inventoryList changes.
 
-  console.log(currentInventory, "currentInventory");
-  console.log(inventoryList, "inventoryList");
+  console.log(currentInventory);
 
-  // const food: any = useLoaderData();
   return (
     <Container>
       {inventoryList.length > 0 && (
-        <InventorySelect
-          inventoryList={inventoryList}
-          fetchInventoryById={fetchInventoryById}
-        />
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Button onClick={() => setCreateOpen(true)}>Create Inventory</Button>
+          <InventorySelect
+            inventoryList={inventoryList}
+            fetchInventoryById={fetchInventoryById}
+            getInventoryById={getInventoryById}
+          />
+          <Button onClick={handleDeleteOpen}>
+            <DeleteForeverIcon />
+          </Button>
+        </div>
       )}
 
       {currentInventory.inventoryName ? (
@@ -102,9 +116,11 @@ export default function Inventory() {
           <Typorgraphy align="center" variant="h4">
             Please Create an Inventory
           </Typorgraphy>
-          <CreateInventory />
+          <Button onClick={() => setCreateOpen(true)}>Create Inventory</Button>
         </>
       )}
+      <CreateInventory open={createOpen} setOpen={setCreateOpen} />
+      <DeleteInventory open={deleteOpen} setOpen={setDeleteOpen} />
     </Container>
   );
 }

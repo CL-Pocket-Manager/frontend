@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
@@ -9,9 +9,12 @@ import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import DeleteItem from "../components/Items/DeleteItem";
 import EditItem from "../components/Items/EditItem";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 export default function ItemDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [item, setItem] = useState<any>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -29,6 +32,9 @@ export default function ItemDetail() {
 
   return (
     <Container>
+      <Button onClick={() => navigate(-1)} variant="contained">
+        <ArrowBackIosNewIcon />
+      </Button>
       <Card sx={{ display: "flex", padding: 2, marginTop: 3 }}>
         <CardMedia
           sx={{ height: 140, width: 140, padding: 1 }}

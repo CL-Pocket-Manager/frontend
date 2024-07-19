@@ -18,10 +18,9 @@ const style = {
   p: 4,
 };
 
-export default function CreateInventory() {
+export default function CreateInventory(props: any) {
+  const { open, setOpen } = props;
   const [inventoryName, setInventoryName] = useState("");
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +39,6 @@ export default function CreateInventory() {
 
   return (
     <div>
-      <Button onClick={handleOpen}>Create Inventory</Button>
       <Modal
         open={open}
         onClose={handleClose}
