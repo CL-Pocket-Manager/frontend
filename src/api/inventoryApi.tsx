@@ -40,3 +40,15 @@ export const addItemToInventory = async (inventoryId: string, item: any) => {
   const data = await res.json();
   return data;
 };
+
+// Get Item from an Inventory
+export const getItemFromInventory = async (
+  inventoryId: string,
+  itemId: string
+) => {
+  const res = await fetch(
+    `${BASE_URL}/inventory/${inventoryId}/items/${itemId}`
+  );
+  const data = await res.json();
+  return data;
+};

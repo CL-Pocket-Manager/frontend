@@ -10,19 +10,34 @@ import {
   createItem,
 } from "../../api/itemsApi";
 import { addItemToInventory } from "../../api/inventoryApi";
+import {
+  createDistributor,
+  fetchAllDistributors,
+} from "../../api/distributorApi";
 import InventoryItemForm from "../Forms/InventoryItemForm";
 import ItemForm from "../Forms/ItemForm";
+import DistributorForm from "../Forms/DistributorForm";
 import { Typography } from "@mui/material";
 
 export default function AddItem(props: any) {
   const { open, setOpen, inventory } = props;
   const [activeStep, setActiveStep] = useState(0);
+  const [allItems, setAllItems] = useState<BaseItem[]>([]);
+  const [allDistributors, setAllDistributors] = useState<BaseItem[]>([]);
+
   let newItem: any = null;
-  const [value, setValue] = useState<BaseItem | null>({
+  let newDistributor: any = null;
+
+  const [itemValue, setItemValue] = useState<BaseItem | null>({
     _id: "",
     name: "",
   });
-  const [allItems, setAllItems] = useState<BaseItem[]>([]);
+
+  const [distributorValue, setDistributorValue] = useState<BaseItem | null>({
+    _id: "",
+    name: "",
+  });
+
   const [itemData, setItemData] = useState({
     item: "",
     onModel: "",
@@ -35,7 +50,7 @@ export default function AddItem(props: any) {
   });
 
   const [newItemData, setNewItemData] = useState({
-    name: value?.inputValue || "",
+    name: itemValue?.inputValue || "",
     image: "",
     description: "",
     itemType: "",
@@ -43,26 +58,60 @@ export default function AddItem(props: any) {
     alcoholContent: 0,
   });
 
+  const [newDistributorData, setNewDistributorData] = useState({
+    name: distributorValue?.inputValue || "",
+    website: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+  });
+
   useEffect(() => {
-    if (value) {
-      console.log(value);
+    if (itemValue) {
+      console.log(itemValue);
       setNewItemData({
         ...newItemData,
-        name: value.inputValue || value.name,
+        name: itemValue.inputValue || itemValue.name,
       });
       setItemData({
         ...itemData,
-        item: value._id,
+        item: itemValue._id,
       });
     }
-  }, [value]);
+  }, [itemValue]);
 
-  const steps = ["Inventory Item", "Add Item"];
+  useEffect(() => {
+    if (distributorValue) {
+      console.log(distributorValue);
+      setNewDistributorData({
+        ...newDistributorData,
+        name: distributorValue.inputValue || distributorValue.name,
+      });
+      setItemData({
+        ...itemData,
+        distributor: distributorValue._id,
+      });
+    }
+  }, [distributorValue]);
+
+  const steps = ["Inventory Item", "Add Item", "Add Distributor"];
 
   const handleClose = () => {
     setOpen(false);
     setTimeout(() => {
       setActiveStep(0);
+      setItemData({
+        item: "",
+        onModel: "",
+        unitOfMeasure: "",
+        qtyPerUnit: 0,
+        costPerUnit: 0,
+        distributor: "",
+        par: 0,
+        stock: 0,
+      });
+      setItemValue({ _id: "", name: "" });
+      setDistributorValue({ _id: "", name: "" });
     }, 500);
   };
 
@@ -72,27 +121,46 @@ export default function AddItem(props: any) {
         return (
           <>
             <Typography>Add Item to Inventory</Typography>
-            <InventoryItemForm
-              itemData={itemData}
-              setItemData={setItemData}
-              allItems={allItems}
-              setActiveStep={setActiveStep}
-              value={value}
-              setValue={setValue}
-            />
-            <Button onClick={handleFormSubmit}>Submit</Button>
+            <form onSubmit={handleFormSubmit} autoComplete="off">
+              <InventoryItemForm
+                itemData={itemData}
+                setItemData={setItemData}
+                allItems={allItems}
+                allDistributors={allDistributors}
+                setActiveStep={setActiveStep}
+                itemValue={itemValue}
+                setItemValue={setItemValue}
+                distributorValue={distributorValue}
+                setDistributorValue={setDistributorValue}
+              />
+              <Button type="submit">Submit</Button>
+            </form>
           </>
         );
       case 1:
         return (
           <>
             <Button onClick={() => setActiveStep(0)}>Back</Button>
-            <ItemForm
+            <form onSubmit={handleItemCreate} autoComplete="off">
+              <ItemForm
+                isNew={true}
+                itemData={newItemData}
+                setItemData={setNewItemData}
+              />
+              <Button type="submit">Create</Button>
+            </form>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <Button onClick={() => setActiveStep(0)}>Back</Button>
+            <DistributorForm
               isNew={true}
-              itemData={newItemData}
-              setItemData={setNewItemData}
+              distributorData={newDistributorData}
+              setDistributorData={setNewDistributorData}
             />
-            <Button onClick={handleItemCreate}>Create</Button>
+            <Button onClick={handleDistributorCreate}>Create</Button>
           </>
         );
       default:
@@ -103,42 +171,59 @@ export default function AddItem(props: any) {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log(itemData);
       addItemToInventory(inventory._id, itemData);
       console.log("Item added to inventory");
     } catch (error) {
       console.error(error);
     }
-    setOpen(false);
+    if (activeStep === 0) {
+      setOpen(false);
+    }
   };
 
-  const handleItemCreate = async () => {
+  const handleItemCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     try {
       if (newItemData.itemType === "Alcoholic Beverage") {
         newItem = await createAlcoholicItem(newItemData);
+        console.log("Alcoholic item created", newItem); // Debug log
       } else {
         newItem = await createItem(newItemData);
+        console.log("Item created", newItem); // Debug log
       }
     } catch (error) {
       console.error(error);
     }
     console.log("Item created");
+    setItemData((prevItemData) => ({
+      ...prevItemData,
+      item: newItem._id,
+    }));
+    setActiveStep(0);
+  };
+
+  const handleDistributorCreate = async () => {
+    try {
+      newDistributor = await createDistributor(newDistributorData);
+    } catch (error) {
+      console.error(error);
+    }
+    console.log("Distributor created");
+    setItemData((prevItemData) => ({
+      ...prevItemData,
+      distributor: newDistributor._id,
+    }));
     setActiveStep(0);
   };
 
   useEffect(() => {
-    if (newItem) {
-      let newItemID = newItem._id;
-      setItemData((prevItemData) => ({
-        ...prevItemData,
-        item: newItemID,
-      }));
-    }
-  }, [newItem]);
-
-  useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchAllItemsShort();
-      setAllItems(data);
+      const itemData = await fetchAllItemsShort();
+      setAllItems(itemData);
+      const distributorData = await fetchAllDistributors();
+      setAllDistributors(distributorData);
     };
 
     fetchData();
@@ -147,7 +232,7 @@ export default function AddItem(props: any) {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
-        <Stepper activeStep={activeStep}>
+        <Stepper nonLinear alternativeLabel activeStep={activeStep}>
           {steps.map((label) => (
             <Step key={label}>{/* <StepLabel>{label}</StepLabel> */}</Step>
           ))}

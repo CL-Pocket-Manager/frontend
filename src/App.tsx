@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Items from "./pages/Items";
 import ItemDetail from "./pages/ItemDetail";
 import Inventory from "./pages/Inventory/Inventory";
+import InventoryItemDetail from "./pages/Inventory/InventoryItemDetail";
 
 // layouts
 import RootLayout from "./layouts/RootLayout";
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path="about" element={<About />} />
       <Route path="inventory" element={<Inventory />} />
+      <Route path=":inventoryId/:itemId" element={<InventoryItemDetail />} />
       <Route path="items" element={<Items />} />
       <Route path="items/:id" element={<ItemDetail />} />
     </Route>

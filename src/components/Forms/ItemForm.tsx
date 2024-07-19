@@ -28,7 +28,7 @@ export default function ItemForm(props: any) {
   };
 
   return (
-    <form>
+    <>
       <Typography>{isNew ? "Create New Item" : "Edit Item"}</Typography>
 
       <TextField
@@ -39,7 +39,6 @@ export default function ItemForm(props: any) {
         fullWidth
         margin="normal"
         variant="outlined"
-        autoComplete="off"
         required
       />
       <TextField
@@ -51,7 +50,6 @@ export default function ItemForm(props: any) {
         margin="normal"
         variant="outlined"
         type="url"
-        autoComplete="off"
       />
       <TextField
         label="Description"
@@ -61,7 +59,6 @@ export default function ItemForm(props: any) {
         fullWidth
         margin="normal"
         variant="outlined"
-        autoComplete="off"
       />
       <FormControl fullWidth margin="normal">
         <InputLabel>Item Type</InputLabel>
@@ -114,6 +111,6 @@ export default function ItemForm(props: any) {
           />
         </>
       )}
-    </form>
+    </>
   );
 }

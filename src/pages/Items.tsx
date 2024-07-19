@@ -2,6 +2,7 @@ import { Button, Container } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ItemForm from "../components/Items/ItemForm";
 import CreateItem from "../components/Items/CreateItem";
+import { fetchAllItems } from "../api/itemsApi";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -20,10 +21,13 @@ export default function Items() {
   };
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/items/all`)
-      .then((res) => res.json())
-      .then((data) => setItems(data));
-  }, []);
+    const fetchItems = async () => {
+      const fetchedData = await fetchAllItems(); // Assume fetchData is your method to fetch items
+      setItems(fetchedData); // Updating state will cause a re-render
+    };
+
+    fetchItems();
+  }, [open]); // Dependency array, re-run effect if `open` changes
 
   return (
     <Container>

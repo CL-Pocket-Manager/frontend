@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -108,9 +109,6 @@ export default function Items(props: any) {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="flex-start">
-      <Button onClick={() => setEditMode(!editMode)}>
-        {editMode ? "Save" : "Edit"}
-      </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -135,102 +133,21 @@ export default function Items(props: any) {
                   "&:last-child td, &:last-child th": { border: 0 },
                 }}
               >
-                {editItemId === item._id ? (
-                  <>
-                    <TableCell component="th" scope="row">
-                      <TextField
-                        name="name"
-                        value={editFormData.name}
-                        onChange={handleUpdate}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <TextField
-                        name="unit"
-                        value={editFormData.unit}
-                        onChange={handleUpdate}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <TextField
-                        name="qtyPerUnit"
-                        value={editFormData.qtyPerUnit}
-                        onChange={handleUpdate}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <TextField
-                        name="par"
-                        value={editFormData.par}
-                        onChange={handleUpdate}
-                      />
-                    </TableCell>
-
-                    <Button
-                      style={{ position: "absolute" }}
-                      onClick={handleSaveClick}
-                    >
-                      Save
-                    </Button>
-                  </>
-                ) : (
-                  <>
+                <>
+                  <Link
+                    to={`/${inventory._id}/${item._id}`}
+                    state={{ item: item.item }}
+                  >
                     <TableCell component="th" scope="row">
                       {itemDict[item.item]}
                     </TableCell>
-                    <TableCell align="right">{item.unitOfMeasure}</TableCell>
-                    <TableCell align="right">{item.qtyPerUnit}</TableCell>
-                    <TableCell align="right">{item.par}</TableCell>
-
-                    <Button
-                      style={{ position: "absolute" }}
-                      onClick={() => handleEditClick(item)}
-                    >
-                      Edit
-                    </Button>
-                  </>
-                )}
+                  </Link>
+                  <TableCell align="right">{item.unitOfMeasure}</TableCell>
+                  <TableCell align="right">{item.qtyPerUnit}</TableCell>
+                  <TableCell align="right">{item.par}</TableCell>
+                </>
               </TableRow>
             ))}
-            {editMode && (
-              <TableRow>
-                <TableCell>
-                  <TextField
-                    name="name"
-                    value={newItem.name}
-                    onChange={handleChange}
-                    type="text"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <TextField
-                    name="unit"
-                    value={newItem.unit}
-                    onChange={handleChange}
-                    type="text"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <TextField
-                    name="qtyPerUnit"
-                    value={newItem.qtyPerUnit}
-                    onChange={handleChange}
-                    type="number"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <TextField
-                    name="par"
-                    value={newItem.par}
-                    onChange={handleChange}
-                    type="number"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <Button onClick={handleSubmit}>Add</Button>
-                </TableCell>
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>
