@@ -120,7 +120,11 @@ export default function Inventory() {
         </>
       )}
       <CreateInventory open={createOpen} setOpen={setCreateOpen} />
-      <DeleteInventory open={deleteOpen} setOpen={setDeleteOpen} />
+      <DeleteInventory
+        open={deleteOpen}
+        setOpen={setDeleteOpen}
+        inventoryId={currentInventory._id}
+      />
     </Container>
   );
 }
