@@ -135,7 +135,7 @@ export default function Items(props: any) {
               >
                 <>
                   <Link
-                    to={`/${inventory._id}/${item._id}`}
+                    to={`${inventory._id}/${item._id}`}
                     state={{ item: item.item }}
                   >
                     <TableCell component="th" scope="row">

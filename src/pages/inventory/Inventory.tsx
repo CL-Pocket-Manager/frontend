@@ -1,58 +1,33 @@
 import { useState, useEffect } from "react";
-import {
-  fetchAllInventories,
-  fetchInventoryById,
-} from "../../api/inventoryApi";
+import { fetchAllInventories } from "../../api/inventoryApi";
+import { useNavigate } from "react-router-dom";
 import Typorgraphy from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import InventorySelect from "../../components/Nav/InventorySelect";
+import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
+import Link from "@mui/material/Link";
+import { styled } from "@mui/material/styles";
 import CreateInventory from "../../components/Inventory/CreateInventory";
-import Items from "./Items";
-import Archive from "../../components/Inventory/Archive";
-import DeleteInventory from "../../components/Inventory/DeleteInventory";
+
+const Item = styled(Paper)(({ theme }) => ({
+  background: theme.palette.background.default,
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 export default function Inventory() {
-  const [value, setValue] = useState("1");
+  const navigate = useNavigate();
   const [inventoryList, setInventoryList] = useState<any[]>([]);
-  const [currentInventory, setCurrentInventory] = useState<any>({});
-  const [archive, setArchive] = useState([]);
   const [createOpen, setCreateOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-
-  // Get Archive from API call
-  const fetchArchive = async () => {
-    const res = await fetch(
-      `${import.meta.env.VITE_APP_API_BASE_URL}/food/archive`
-    );
-    const data = await res.json();
-    setArchive(data);
-  };
-
-  const handleDeleteOpen = () => {
-    setDeleteOpen(true);
-  };
 
   // Get Inventories
   const getInventories = async () => {
     const inventories = await fetchAllInventories();
     setInventoryList(inventories);
-  };
-
-  // Get Inventory by ID
-  const getInventoryById = async (id: string) => {
-    const inventory = await fetchInventoryById(id);
-    setCurrentInventory(inventory);
-  };
-
-  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
   };
 
   useEffect(() => {
@@ -63,68 +38,39 @@ export default function Inventory() {
     fetchInventories();
   }, []);
 
-  useEffect(() => {
-    if (inventoryList.length > 0) {
-      console.log(inventoryList[0]._id, "inventoryList[0]._id");
-      const firstInventoryId = inventoryList[0]._id; // Get the first inventory id
-      getInventoryById(firstInventoryId);
-    }
-  }, [inventoryList]); // This useEffect runs whenever inventoryList changes.
-
-  console.log(currentInventory);
-
   return (
     <Container>
-      {inventoryList.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <Button onClick={() => setCreateOpen(true)}>Create Inventory</Button>
-          <InventorySelect
-            inventoryList={inventoryList}
-            fetchInventoryById={fetchInventoryById}
-            getInventoryById={getInventoryById}
-          />
-          <Button onClick={handleDeleteOpen}>
-            <DeleteForeverIcon />
-          </Button>
-        </div>
-      )}
-
-      {currentInventory.inventoryName ? (
-        <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
-              <Tab label="Items" value="1" />
-              <Tab label="Archive" value="2" sx={{ marginLeft: "auto" }} />
-            </TabList>
-          </Box>
-          <TabPanel value="1">
-            <Items inventory={currentInventory} />
-          </TabPanel>
-          <TabPanel value="2">
-            {archive && <Archive archiveData={archive} />}
-          </TabPanel>
-          {/* <TabPanel value="3">
-            <TakeFoodInventory
-              food={food}
-              fetchArchive={fetchArchive}
-              archive={archive}
-            />
-          </TabPanel> */}
-        </TabContext>
+      {inventoryList.length > 0 ? (
+        <Box
+          display="flex"
+          alignItems="center"
+          height={"80vh"}
+          justifyContent="center"
+        >
+          <Stack spacing={2}>
+            {inventoryList.map((inventory) => (
+              <Link
+                key={inventory._id}
+                component="button" // Change this to 'button' to make it clickable without href
+                onClick={() => navigate(`/inventory/${inventory._id}`)} // Use navigate here underline="none"
+              >
+                <Item>{inventory.inventoryName}</Item>
+              </Link>
+            ))}
+            <Button variant="contained" onClick={() => setCreateOpen(true)}>
+              Create Inventory
+            </Button>
+          </Stack>
+        </Box>
       ) : (
         <>
-          <Typorgraphy align="center" variant="h4">
-            Please Create an Inventory
+          <Typorgraphy align="center" variant="h6">
+            Please Create Your First Inventory
           </Typorgraphy>
           <Button onClick={() => setCreateOpen(true)}>Create Inventory</Button>
         </>
       )}
       <CreateInventory open={createOpen} setOpen={setCreateOpen} />
-      <DeleteInventory
-        open={deleteOpen}
-        setOpen={setDeleteOpen}
-        inventoryId={currentInventory._id}
-      />
     </Container>
   );
 }

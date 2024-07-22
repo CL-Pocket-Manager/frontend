@@ -24,6 +24,22 @@ export const deleteInventory = async (inventoryId: string) => {
   return data;
 };
 
+// Update Inventory Name
+export const updateInventoryName = async (
+  inventoryId: string,
+  inventoryName: string
+) => {
+  const res = await fetch(`${BASE_URL}/inventory/${inventoryId}/update-name`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ inventoryName }),
+  });
+  const data = await res.json();
+  return data;
+};
+
 // Get All Inventories
 export const fetchAllInventories = async () => {
   const res = await fetch(`${BASE_URL}/inventory/all`);

@@ -20,7 +20,7 @@ import DistributorForm from "../Forms/DistributorForm";
 import { Typography } from "@mui/material";
 
 export default function AddItem(props: any) {
-  const { open, setOpen, inventory } = props;
+  const { open, setOpen, inventory, getInventoryData } = props;
   const [activeStep, setActiveStep] = useState(0);
   const [allItems, setAllItems] = useState<BaseItem[]>([]);
   const [allDistributors, setAllDistributors] = useState<BaseItem[]>([]);
@@ -68,7 +68,6 @@ export default function AddItem(props: any) {
 
   useEffect(() => {
     if (itemValue) {
-      console.log(itemValue);
       setNewItemData({
         ...newItemData,
         name: itemValue.inputValue || itemValue.name,
@@ -82,7 +81,6 @@ export default function AddItem(props: any) {
 
   useEffect(() => {
     if (distributorValue) {
-      console.log(distributorValue);
       setNewDistributorData({
         ...newDistributorData,
         name: distributorValue.inputValue || distributorValue.name,
@@ -168,12 +166,13 @@ export default function AddItem(props: any) {
     }
   }
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       console.log(itemData);
       addItemToInventory(inventory._id, itemData);
       console.log("Item added to inventory");
+      await getInventoryData();
     } catch (error) {
       console.error(error);
     }

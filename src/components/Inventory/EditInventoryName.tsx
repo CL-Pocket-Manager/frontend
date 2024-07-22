@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import { createInventory } from "../../api/inventoryApi";
+import { updateInventoryName } from "../../api/inventoryApi";
 
 const style = {
   position: "absolute" as "absolute",
@@ -19,20 +19,25 @@ const style = {
   padding: "20px",
 };
 
-export default function CreateInventory(props: any) {
-  const { open, setOpen } = props;
-  const [inventoryName, setInventoryName] = useState("");
+export default function EditInventoryName(props: any) {
+  const { open, setOpen, inventory, getInventoryData } = props;
+  const [inventoryName, setInventoryName] = useState(
+    inventory?.inventoryName || ""
+  );
   const handleClose = () => setOpen(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInventoryName(e.target.value);
   };
 
-  const handleCreate = async () => {
-    const newInventory = await createInventory(inventoryName);
-    console.log(newInventory);
-    setInventoryName("");
-    if (!newInventory) {
+  const handleUpdate = async () => {
+    const updatedInventory = await updateInventoryName(
+      inventory._id,
+      inventoryName
+    );
+    console.log(updatedInventory);
+    getInventoryData();
+    if (!updatedInventory) {
       console.error("Error creating inventory");
     }
     setOpen(false);
@@ -48,7 +53,7 @@ export default function CreateInventory(props: any) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Pocket Manager
+            Edit Name
           </Typography>
           <Box component="form" sx={{ mt: 2 }}>
             <TextField
@@ -59,6 +64,7 @@ export default function CreateInventory(props: any) {
               margin="normal"
               value={inventoryName}
               onChange={handleInputChange}
+              autoComplete="off"
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
               <Button
@@ -71,9 +77,9 @@ export default function CreateInventory(props: any) {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleCreate}
+                onClick={handleUpdate}
               >
-                Create
+                Update
               </Button>
             </Box>
           </Box>

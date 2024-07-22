@@ -36,8 +36,6 @@ export default function InventoryItemForm(props: any) {
     });
   };
 
-  console.log(itemValue);
-
   return (
     <>
       <Autocomplete
@@ -106,6 +104,7 @@ export default function InventoryItemForm(props: any) {
           name="unitOfMeasure"
           value={itemData.unitOfMeasure}
           onChange={handleSelectChange}
+          required
         >
           <MenuItem value="Each">Each</MenuItem>
           <MenuItem value="Case">Case</MenuItem>
