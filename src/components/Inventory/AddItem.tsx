@@ -173,6 +173,7 @@ export default function AddItem(props: any) {
       addItemToInventory(inventory._id, itemData);
       console.log("Item added to inventory");
       await getInventoryData();
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

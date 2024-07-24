@@ -9,7 +9,7 @@ import {
 import Home from "./pages/Home";
 import Items from "./pages/Items";
 import ItemDetail from "./pages/ItemDetail";
-import Inventory from "./pages/Inventory/Inventory";
+import InventorySelect from "./pages/Inventory/InventorySelect";
 import InventoryDetail from "./pages/Inventory/InventoryDetail";
 import InventoryItemDetail from "./pages/Inventory/InventoryItemDetail";
 
@@ -20,7 +20,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
-      <Route path="inventory" element={<Inventory />} />
+      <Route path="inventory" element={<InventorySelect />} />
       <Route path="inventory/:inventoryId" element={<InventoryDetail />} />
       <Route
         path="inventory/:inventoryId/:itemId"

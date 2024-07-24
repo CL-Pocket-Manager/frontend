@@ -7,12 +7,18 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { fetchInventoryById } from "../../api/inventoryApi";
 import InventoryTable from "../../components/Inventory/InventoryTable";
 import DeleteInventory from "../../components/Inventory/DeleteInventory";
 import EditInventoryName from "../../components/Inventory/EditInventoryName";
 import AddItem from "../../components/Inventory/AddItem";
+import TakeInventory from "../../components/Inventory/TakeInventory";
 import { Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 export default function InventoryDetail() {
   const navigate = useNavigate();
@@ -20,11 +26,21 @@ export default function InventoryDetail() {
   // id of the current inventory
   const inventoryId = params.inventoryId;
 
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [value, setValue] = useState("1");
   const [addItem, setAddItem] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [takeOpen, setTakeOpen] = useState(true);
   const [currentInventory, setCurrentInventory] = useState<any>({});
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const getInventoryData = async () => {
     if (typeof inventoryId === "string") {
@@ -41,6 +57,16 @@ export default function InventoryDetail() {
     setAddItem(true);
   };
 
+  const handleDelete = () => {
+    setDeleteOpen(true);
+    setAnchorEl(null);
+  };
+
+  const handleEdit = () => {
+    setEditOpen(true);
+    setAnchorEl(null);
+  };
+
   useEffect(() => {
     getInventoryData();
   }, [inventoryId]);
@@ -49,33 +75,56 @@ export default function InventoryDetail() {
     setValue(newValue);
   };
 
+  if (!currentInventory) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <Container>
-      <Box m={1}>
-        <Button onClick={() => navigate(-1)} variant="contained">
+    <Container sx={{ padding: "8px" }}>
+      <Box display="flex" justifyContent="center" alignItems="center" m={2}>
+        <Button
+          onClick={() => navigate(-1)}
+          sx={{ position: "absolute", left: "1rem" }}
+        >
           <ArrowBackIosNewIcon fontSize="small" />
         </Button>
-      </Box>
-      <Box display="flex" justifyContent="center" alignItems="center" m={2}>
-        <Typography variant="h4">{currentInventory.inventoryName}</Typography>
-        <EditIcon
-          fontSize="small"
-          sx={{
-            marginLeft: "10px",
-            color: "primary.main",
-            cursor: "pointer",
-            "&:hover": {
-              color: "primary.dark",
-            },
+        <Typography variant="h5">{currentInventory.inventoryName}</Typography>
+
+        <Button
+          onClick={handleClick}
+          sx={{ position: "absolute", right: "2rem" }}
+        >
+          <EditIcon
+            fontSize="small"
+            sx={{
+              marginLeft: "10px",
+              color: "primary.main",
+              cursor: "pointer",
+              "&:hover": {
+                color: "primary.dark",
+              },
+            }}
+          />
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => setAnchorEl(null)}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
           }}
-          onClick={() => setEditOpen(true)}
-        />
+        >
+          <MenuItem onClick={handleEdit}>Edit Inventory</MenuItem>
+          <MenuItem onClick={handleDelete}>Delete Inventory</MenuItem>
+        </Menu>
       </Box>
+
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <Tab label="Items" value="1" />
-            <Tab label="Archive" value="2" sx={{ marginLeft: "auto" }} />
+            <Tab label="Take Inventory" value="2" sx={{ marginLeft: "auto" }} />
           </TabList>
         </Box>
         <TabPanel value="1">
@@ -83,16 +132,14 @@ export default function InventoryDetail() {
           <Button onClick={handleAddItem}>Add Item</Button>
         </TabPanel>
         <TabPanel value="2">
-          {/* {archive && <Archive archiveData={archive} />} */}
+          <TakeInventory
+            open={takeOpen}
+            setOpen={setTakeOpen}
+            inventory={currentInventory.items}
+          />
         </TabPanel>
-        {/* <TabPanel value="3">
-            <TakeFoodInventory
-              food={food}
-              fetchArchive={fetchArchive}
-              archive={archive}
-            />
-          </TabPanel> */}
       </TabContext>
+
       <DeleteInventory
         open={deleteOpen}
         setOpen={setDeleteOpen}
@@ -105,14 +152,17 @@ export default function InventoryDetail() {
         getInventoryData={getInventoryData}
       />
 
-      {currentInventory.inventoryName && (
-        <EditInventoryName
-          open={editOpen}
-          setOpen={setEditOpen}
-          inventory={currentInventory}
-          getInventoryData={getInventoryData}
-        />
-      )}
+      <EditInventoryName
+        open={editOpen}
+        setOpen={setEditOpen}
+        inventory={currentInventory}
+        getInventoryData={getInventoryData}
+      />
+      {/* <TakeInventory
+        open={takeOpen}
+        setOpen={setTakeOpen}
+        inventory={currentInventory.items}
+      /> */}
     </Container>
   );
 }

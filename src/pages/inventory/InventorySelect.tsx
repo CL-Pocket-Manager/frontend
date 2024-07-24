@@ -19,7 +19,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function Inventory() {
+export default function InventorySelect() {
   const navigate = useNavigate();
   const [inventoryList, setInventoryList] = useState<any[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
@@ -38,9 +38,13 @@ export default function Inventory() {
     fetchInventories();
   }, []);
 
+  if (!inventoryList) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Container>
-      {inventoryList.length > 0 ? (
+      {inventoryList?.length > 0 ? (
         <Box
           display="flex"
           alignItems="center"

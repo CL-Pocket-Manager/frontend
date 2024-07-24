@@ -48,7 +48,7 @@ export default function CreateInventory(props: any) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Pocket Manager
+            Create New Inventory
           </Typography>
           <Box component="form" sx={{ mt: 2 }}>
             <TextField
