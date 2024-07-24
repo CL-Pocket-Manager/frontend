@@ -40,6 +40,7 @@ export default function ItemForm(props: any) {
         margin="normal"
         variant="outlined"
         required
+        autoComplete="off"
       />
       <TextField
         label="Image URL"
@@ -50,15 +51,19 @@ export default function ItemForm(props: any) {
         margin="normal"
         variant="outlined"
         type="url"
+        autoComplete="off"
       />
       <TextField
         label="Description"
         name="description"
         value={itemData.description}
         onChange={handleChange}
+        multiline
+        rows={4}
         fullWidth
         margin="normal"
         variant="outlined"
+        autoComplete="off"
       />
       <FormControl fullWidth margin="normal">
         <InputLabel>Item Type</InputLabel>

@@ -118,7 +118,12 @@ export default function AddItem(props: any) {
       case 0:
         return (
           <>
-            <Typography>Add Item to Inventory</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Add New Inventory Item
+            </Typography>
+            <Typography variant="body2" sx={{ marginBottom: "20px" }}>
+              Enter the details for the new item.
+            </Typography>
             <form onSubmit={handleFormSubmit} autoComplete="off">
               <InventoryItemForm
                 itemData={itemData}
@@ -131,7 +136,25 @@ export default function AddItem(props: any) {
                 distributorValue={distributorValue}
                 setDistributorValue={setDistributorValue}
               />
-              <Button type="submit">Submit</Button>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-end",
+                  marginTop: "20px",
+                }}
+              >
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ marginLeft: "auto" }}
+                >
+                  Save Item
+                </Button>
+              </div>
             </form>
           </>
         );
@@ -230,13 +253,9 @@ export default function AddItem(props: any) {
   }, []);
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogContent>
-        <Stepper nonLinear alternativeLabel activeStep={activeStep}>
-          {steps.map((label) => (
-            <Step key={label}>{/* <StepLabel>{label}</StepLabel> */}</Step>
-          ))}
-        </Stepper>
+    <Dialog fullWidth open={open} onClose={handleClose} sx={{}}>
+      <DialogContent sx={{ margin: "10px" }}>
+        <Stepper nonLinear sx={{ width: 0 }} activeStep={activeStep}></Stepper>
         {_renderStepContent(activeStep)}
       </DialogContent>
     </Dialog>

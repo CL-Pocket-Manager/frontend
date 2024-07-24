@@ -4,7 +4,7 @@ import { Container, Typography, Paper, Box } from "@mui/material";
 export default function Home() {
   return (
     <Container maxWidth="sm">
-      <Paper elevation={3} style={{ padding: "20px", marginTop: "20px" }}>
+      <Paper elevation={3} style={{ padding: "20px", marginTop: "40px" }}>
         <Box textAlign="center" display="flex" flexDirection="column" gap={2}>
           <Typography variant="h4" gutterBottom>
             Welcome to Pocket Manager

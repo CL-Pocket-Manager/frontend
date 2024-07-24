@@ -38,19 +38,26 @@ export default function CreateItem(props: any) {
       createItem(itemData);
       setOpen(false);
     }
+    window.location.reload();
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogContent>
-        <ItemForm itemData={itemData} setItemData={setItemData} isNew={true} />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button type="submit" onSubmit={handleFormSubmit}>
-          Create
-        </Button>
-      </DialogActions>
+      <form onSubmit={handleFormSubmit}>
+        <DialogContent>
+          <ItemForm
+            itemData={itemData}
+            setItemData={setItemData}
+            isNew={true}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit" onSubmit={handleFormSubmit}>
+            Create
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }

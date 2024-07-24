@@ -32,6 +32,7 @@ export default function CreateInventory(props: any) {
     const newInventory = await createInventory(inventoryName);
     console.log(newInventory);
     setInventoryName("");
+    window.location.reload();
     if (!newInventory) {
       console.error("Error creating inventory");
     }
