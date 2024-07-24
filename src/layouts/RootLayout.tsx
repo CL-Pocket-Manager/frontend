@@ -16,10 +16,18 @@ export default function RootLayout() {
       <AppBar position="sticky">
         <Container>
           <Toolbar sx={{ display: "flex", gap: "10px" }}>
-            <Typography variant="h4" sx={{ marginRight: "auto" }}>
-              {mobile ? "PM" : "Pocket Manager"}
-            </Typography>
-            <Link component={NavLink} underline="none" color={"#fff"} to={"/"}>
+            <Link
+              component={NavLink}
+              underline="none"
+              color={"#fff"}
+              to={"/"}
+              sx={{ marginRight: "auto" }}
+            >
+              <Typography variant="h4">
+                {mobile ? "PM" : "Pocket Manager"}
+              </Typography>
+            </Link>
+            {/* <Link component={NavLink} underline="none" color={"#fff"} to={"/"}>
               Home
             </Link>
             <Link
@@ -29,7 +37,7 @@ export default function RootLayout() {
               to={"about"}
             >
               About
-            </Link>
+            </Link> */}
             <Link
               component={NavLink}
               underline="none"
@@ -37,6 +45,14 @@ export default function RootLayout() {
               to={"inventory"}
             >
               Inventory
+            </Link>
+            <Link
+              component={NavLink}
+              underline="none"
+              color={"#fff"}
+              to={"items"}
+            >
+              Items
             </Link>
           </Toolbar>
         </Container>
