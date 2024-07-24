@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -7,34 +7,23 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogActions from "@mui/material/DialogActions";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import ReportTable from "../../utils/ReportTable";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { fetchAllItemsShort } from "../../api/itemsApi";
 
 export default function TakeInventory(props: any) {
   const { inventory, open, setOpen } = props;
-  console.log(inventory);
+  console.log(inventory, open);
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [itemDict, setItemDict] = useState<any>({});
-  const [fetchComplete, setFetchComplete] = useState(false);
 
   const [inventoryItems, setInventoryItems] = useState<any>(inventory.items);
   const [items, setItems] = useState<any>();
@@ -86,49 +75,9 @@ export default function TakeInventory(props: any) {
     setItems(updatedItems);
   };
 
-  const handleStockChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    id: string
-  ) => {
-    const updatedFoodItems = items.map((item: any) => {
-      if (item._id === id) {
-        return {
-          ...item,
-          stock: Number(event.target.value),
-        };
-      }
-      return item;
-    });
-
-    setItems(updatedFoodItems);
-  };
-
   const handleSubmit = () => {
     setOpen(true);
-    // Send the updated items to the server and save in Archive Collection
-    //   fetch(`${import.meta.env.VITE_APP_API_BASE_URL}/food/archive/create`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(items),
-    //   })
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       console.log(data);
-    //       fetchArchive();
-    //     })
-    //     .then(() => {
-    //       setFetchComplete(true); // Set fetchComplete to true after fetch operation and any subsequent operations are complete
-    //     })
-    //     .catch((error) => console.error("Error:", error));
-
-    //   fetchArchive();
-    //   setItems(inventory.map((item: any) => ({ ...item, stock: 0 }))); // Reset stock values
-    // };
-
-    // console.log(archive[archive.length - 1].date);
-
+    console.log(items);
     console.log("Inventory submitted");
   };
 
@@ -226,7 +175,7 @@ export default function TakeInventory(props: any) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {inventory.map((item: any) => (
+              {inventoryItems.map((item: any) => (
                 <TableRow
                   key={item._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -276,27 +225,6 @@ export default function TakeInventory(props: any) {
       >
         Submit
       </Button>
-      {/* <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Inventory Submitted</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Inventory has been submitted successfully.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Close</Button>
-          {/* {fetchComplete && (
-              <PDFDownloadLink
-                document={<ReportTable data={archive[archive.length - 1]} />}
-                fileName={`Bk_Food_${
-                  archive[archive.length - 1].date.split("T")[0]
-                }.pdf`}
-              >
-                <Button>Download</Button>
-              </PDFDownloadLink>
-            )} */}
-      {/* </DialogActions>
-      </Dialog> */}
     </>
   );
 }

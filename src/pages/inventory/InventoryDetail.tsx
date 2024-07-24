@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -7,7 +7,6 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { fetchInventoryById } from "../../api/inventoryApi";
 import InventoryTable from "../../components/Inventory/InventoryTable";
 import DeleteInventory from "../../components/Inventory/DeleteInventory";
@@ -15,8 +14,6 @@ import EditInventoryName from "../../components/Inventory/EditInventoryName";
 import AddItem from "../../components/Inventory/AddItem";
 import TakeInventory from "../../components/Inventory/TakeInventory";
 import { Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
@@ -25,9 +22,6 @@ export default function InventoryDetail() {
   const params = useParams();
   // id of the current inventory
   const inventoryId = params.inventoryId;
-
-  const theme = useTheme();
-  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [value, setValue] = useState("1");
   const [addItem, setAddItem] = useState(false);
@@ -158,11 +152,6 @@ export default function InventoryDetail() {
         inventory={currentInventory}
         getInventoryData={getInventoryData}
       />
-      {/* <TakeInventory
-        open={takeOpen}
-        setOpen={setTakeOpen}
-        inventory={currentInventory.items}
-      /> */}
     </Container>
   );
 }
