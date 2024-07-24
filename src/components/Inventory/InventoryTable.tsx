@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -7,7 +7,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { fetchAllItemsShort } from "../../api/itemsApi";
 import { useTheme } from "@mui/material/styles";
@@ -15,16 +14,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Typography } from "@mui/material";
 
 export default function InventoryTable(props: any) {
-  const { inventory, open, setOpen } = props;
+  const { inventory } = props;
   const [inventoryItems, setInventoryItems] = useState<any>(inventory.items);
   const [itemDict, setItemDict] = useState<any>({});
 
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   useEffect(() => {
     const fetchItems = async () => {
