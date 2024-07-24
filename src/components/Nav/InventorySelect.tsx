@@ -6,7 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 
 export default function InventorySelect(props: any) {
-  const { inventoryList, fetchInventoryById, getInventoryById } = props;
+  const { inventoryList, getInventoryById } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const open = Boolean(anchorEl);
@@ -15,7 +15,7 @@ export default function InventorySelect(props: any) {
   };
 
   const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLElement>,
+    _: React.MouseEvent<HTMLElement>,
     index: number
   ) => {
     setSelectedIndex(index);

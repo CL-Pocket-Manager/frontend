@@ -3,7 +3,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
 import {
   fetchAllItemsShort,
   createAlcoholicItem,
@@ -91,8 +90,6 @@ export default function AddItem(props: any) {
       });
     }
   }, [distributorValue]);
-
-  const steps = ["Inventory Item", "Add Item", "Add Distributor"];
 
   const handleClose = () => {
     setOpen(false);

@@ -27,17 +27,6 @@ export default function RootLayout() {
                 {mobile ? "PM" : "Pocket Manager"}
               </Typography>
             </Link>
-            {/* <Link component={NavLink} underline="none" color={"#fff"} to={"/"}>
-              Home
-            </Link>
-            <Link
-              component={NavLink}
-              underline="none"
-              color={"#fff"}
-              to={"about"}
-            >
-              About
-            </Link> */}
             <Link
               component={NavLink}
               underline="none"

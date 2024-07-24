@@ -1,10 +1,7 @@
-import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import NativeSelect from "@mui/material/NativeSelect";
 import Box from "@mui/material/Box";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -40,12 +37,6 @@ export default function InventoryItemForm(props: any) {
     setItemData({ ...itemData, [name]: value - 1 });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    console.log(name, value);
-    setItemData({ ...itemData, [name]: value });
-  };
-
   const handleSelectChange = (event: SelectChangeEvent) => {
     const updatedValue = event.target.value as string;
     console.log(updatedValue);
@@ -64,7 +55,7 @@ export default function InventoryItemForm(props: any) {
       <Autocomplete
         size="small"
         value={itemValue}
-        onChange={(event, newValue) => {
+        onChange={(_, newValue) => {
           if (typeof newValue === "string") {
             setItemValue(newValue);
           } else if (newValue && newValue.inputValue) {
@@ -260,27 +251,6 @@ export default function InventoryItemForm(props: any) {
             />
           </Box>
         </div>
-
-        {/* <TextField
-          label="Quantity per Unit"
-          name="qtyPerUnit"
-          value={itemData.qtyPerUnit}
-          onChange={handleChange}
-          type="number"
-          fullWidth
-          variant="outlined"
-          inputProps={{ min: "0" }}
-        /> */}
-        {/* <TextField
-          label="Cost per Unit"
-          name="costPerUnit"
-          value={itemData.costPerUnit}
-          onChange={handleChange}
-          type="number"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        /> */}
       </div>
       <div
         style={{ borderBottom: "1px solid #e4e4e4", margin: "10px 0" }}
@@ -291,7 +261,7 @@ export default function InventoryItemForm(props: any) {
       <Autocomplete
         size="small"
         value={distributorValue}
-        onChange={(event, newValue) => {
+        onChange={(_, newValue) => {
           if (typeof newValue === "string") {
             setDistributorValue(newValue);
           } else if (newValue && newValue.inputValue) {
@@ -348,16 +318,6 @@ export default function InventoryItemForm(props: any) {
           />
         )}
       />
-      {/* <TextField
-          label="Par"
-          name="par"
-          value={itemData.par}
-          onChange={handleChange}
-          type="number"
-          fullWidth
-          margin="normal"
-          variant="outlined"
-        /> */}
     </>
   );
 }
