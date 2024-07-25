@@ -16,6 +16,7 @@ import TakeInventory from "../../components/Inventory/TakeInventory";
 import { Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { fetchAllItemsShort } from "../../api/itemsApi";
 
 export default function InventoryDetail() {
   const navigate = useNavigate();
@@ -29,6 +30,9 @@ export default function InventoryDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [takeOpen, setTakeOpen] = useState(true);
   const [currentInventory, setCurrentInventory] = useState<any>({});
+
+  const [inventoryItems, setInventoryItems] = useState<any>(null);
+  const [itemDict, setItemDict] = useState<any>(null);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -64,6 +68,22 @@ export default function InventoryDetail() {
   useEffect(() => {
     getInventoryData();
   }, [inventoryId]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      const items = await fetchAllItemsShort();
+      const dictionary = items.reduce((acc: any, item: any) => {
+        acc[item._id] = item.name;
+        return acc;
+      }, {});
+      setItemDict(dictionary);
+      setInventoryItems(currentInventory.items);
+    };
+
+    if (currentInventory) {
+      fetchItems();
+    }
+  }, [currentInventory]);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -122,14 +142,15 @@ export default function InventoryDetail() {
           </TabList>
         </Box>
         <TabPanel value="1">
-          <InventoryTable inventory={currentInventory} />
+          <InventoryTable inventoryItems={inventoryItems} itemDict={itemDict} />
           <Button onClick={handleAddItem}>Add Item</Button>
         </TabPanel>
         <TabPanel value="2">
           <TakeInventory
             open={takeOpen}
             setOpen={setTakeOpen}
-            inventory={currentInventory.items}
+            inventoryItems={inventoryItems}
+            itemDict={itemDict}
           />
         </TabPanel>
       </TabContext>

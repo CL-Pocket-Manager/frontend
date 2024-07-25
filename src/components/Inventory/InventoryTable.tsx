@@ -14,26 +14,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Typography } from "@mui/material";
 
 export default function InventoryTable(props: any) {
-  const { inventory } = props;
-  const [inventoryItems, setInventoryItems] = useState<any>(inventory.items);
-  const [itemDict, setItemDict] = useState<any>({});
+  const { inventoryItems, itemDict } = props;
 
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      const items = await fetchAllItemsShort();
-      const dictionary = items.reduce((acc: any, item: any) => {
-        acc[item._id] = item.name;
-        return acc;
-      }, {});
-      setItemDict(dictionary);
-      setInventoryItems(inventory.items);
-    };
-
-    fetchItems();
-  }, [inventory]);
 
   if (inventoryItems === undefined) {
     return <div>Loading...</div>;
