@@ -151,6 +151,7 @@ export default function InventoryDetail() {
             setOpen={setTakeOpen}
             inventoryItems={inventoryItems}
             itemDict={itemDict}
+            inventoryName={currentInventory.inventoryName}
           />
         </TabPanel>
       </TabContext>

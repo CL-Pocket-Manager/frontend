@@ -15,9 +15,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
+import { createArchive } from "../../api/archiveApi";
 
 export default function TakeInventory(props: any) {
-  const { inventoryItems, itemDict } = props;
+  const { inventoryItems, inventoryName, itemDict } = props;
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -57,7 +58,13 @@ export default function TakeInventory(props: any) {
   };
 
   const handleSubmit = () => {
-    console.log(items);
+    const archiveData = {
+      inventoryName,
+      items,
+    };
+    // Create Archive
+    createArchive(archiveData);
+    console.log(archiveData);
     console.log("Inventory submitted");
   };
 
