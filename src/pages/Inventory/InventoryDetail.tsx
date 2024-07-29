@@ -17,6 +17,9 @@ import { Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchAllItemsShort } from "../../api/itemsApi";
+import { fetchAllArchives } from "../../api/archiveApi";
+import ArchivedTable from "../../components/Inventory/ArchivedTable";
+import Archive from "../../components/Inventory/Archive";
 
 export default function InventoryDetail() {
   const navigate = useNavigate();
@@ -30,6 +33,7 @@ export default function InventoryDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [takeOpen, setTakeOpen] = useState(true);
   const [currentInventory, setCurrentInventory] = useState<any>({});
+  const [archiveData, setArchiveData] = useState<any>(null);
 
   const [inventoryItems, setInventoryItems] = useState<any>(null);
   const [itemDict, setItemDict] = useState<any>(null);
@@ -51,6 +55,11 @@ export default function InventoryDetail() {
     }
   };
 
+  const getArchiveData = async () => {
+    const archive = await fetchAllArchives();
+    setArchiveData(archive);
+  };
+
   const handleAddItem = () => {
     setAddItem(true);
   };
@@ -67,6 +76,7 @@ export default function InventoryDetail() {
 
   useEffect(() => {
     getInventoryData();
+    getArchiveData();
   }, [inventoryId]);
 
   useEffect(() => {
@@ -91,6 +101,10 @@ export default function InventoryDetail() {
 
   if (!currentInventory) {
     return <div>Loading...</div>;
+  }
+
+  if (archiveData) {
+    console.log(archiveData[archiveData.length - 1]);
   }
 
   return (
@@ -139,6 +153,7 @@ export default function InventoryDetail() {
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             <Tab label="Items" value="1" />
             <Tab label="Take Inventory" value="2" sx={{ marginLeft: "auto" }} />
+            <Tab label="Archives" value="3" />
           </TabList>
         </Box>
         <TabPanel value="1">
@@ -153,6 +168,11 @@ export default function InventoryDetail() {
             itemDict={itemDict}
             inventoryName={currentInventory.inventoryName}
           />
+        </TabPanel>
+        <TabPanel value="3">
+          {archiveData && (
+            <Archive itemDict={itemDict} archiveData={archiveData} />
+          )}
         </TabPanel>
       </TabContext>
 

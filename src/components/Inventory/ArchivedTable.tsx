@@ -16,9 +16,9 @@ export default function ArchivedTable(props: any) {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
-  const { archive } = props;
+  const { archive, itemDict } = props;
 
-  const shortDate = new Date(archive.date)
+  const shortDate = new Date(archive.archiveDate)
     .toLocaleDateString("en-US", {
       year: "numeric",
       month: "numeric",
@@ -29,7 +29,7 @@ export default function ArchivedTable(props: any) {
   return (
     <TableContainer sx={{ flex: "0 0 100%", minWidth: 0 }} component={Paper}>
       <Typography align="center" variant="h5">
-        {new Date(archive.date).toLocaleDateString("en-US", {
+        {new Date(archive.archiveDate).toLocaleDateString("en-US", {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -39,7 +39,7 @@ export default function ArchivedTable(props: any) {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={handleOpen}>View Details</Button>
         <PDFDownloadLink
-          document={<ReportTable data={archive} />}
+          document={<ReportTable data={archive} itemDict={itemDict} />}
           fileName={`Bk_Food_${shortDate}.pdf`}
         >
           <Button>Download</Button>
@@ -48,7 +48,7 @@ export default function ArchivedTable(props: any) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600 }}>Food Item</TableCell>
+            <TableCell sx={{ fontWeight: 600 }}>Item</TableCell>
             <TableCell sx={{ fontWeight: 600 }} align="right">
               Unit
             </TableCell>
@@ -61,7 +61,7 @@ export default function ArchivedTable(props: any) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {archive.archive.map(
+          {archive.items.map(
             (item: any) =>
               item.stock < item.par && (
                 <TableRow
@@ -69,9 +69,9 @@ export default function ArchivedTable(props: any) {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {item.name}
+                    {itemDict[item.item]}
                   </TableCell>
-                  <TableCell align="right">{item.unit}</TableCell>
+                  <TableCell align="right">{item.unitOfMeasure}</TableCell>
                   <TableCell align="right">{item.qtyPerUnit}</TableCell>
                   <TableCell align="right">{item.par - item.stock}</TableCell>
                 </TableRow>
@@ -90,7 +90,7 @@ export default function ArchivedTable(props: any) {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Food Item</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Item</TableCell>
                 <TableCell sx={{ fontWeight: 600 }} align="right">
                   Unit
                 </TableCell>
@@ -106,15 +106,15 @@ export default function ArchivedTable(props: any) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {archive.archive.map((item: any) => (
+              {archive.items.map((item: any) => (
                 <TableRow
                   key={item._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {item.name}
+                    {itemDict[item.item]}
                   </TableCell>
-                  <TableCell align="right">{item.unit}</TableCell>
+                  <TableCell align="right">{item.unitOfMeasure}</TableCell>
                   <TableCell align="right">{item.qtyPerUnit}</TableCell>
                   <TableCell align="right">{item.par}</TableCell>
                   <TableCell align="right">{item.stock}</TableCell>

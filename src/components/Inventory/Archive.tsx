@@ -6,8 +6,8 @@ import { EmblaCarouselType } from "embla-carousel";
 import { IconButton } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 
-export default function Archive(props: { archiveData: any }) {
-  const { archiveData } = props;
+export default function Archive(props: { archiveData: any; itemDict: any }) {
+  const { archiveData, itemDict } = props;
   const options: EmblaOptionsType = { startIndex: archiveData.length - 1 };
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
@@ -37,7 +37,9 @@ export default function Archive(props: { archiveData: any }) {
   }, [emblaApi, onSelect]);
 
   const archivedTables = archiveData.map((archive: any) => {
-    return <ArchivedTable key={archive._id} archive={archive} />;
+    return (
+      <ArchivedTable key={archive._id} archive={archive} itemDict={itemDict} />
+    );
   });
 
   return (
