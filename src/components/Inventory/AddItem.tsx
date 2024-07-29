@@ -213,6 +213,7 @@ export default function AddItem(props: any) {
         newItem = await createItem(newItemData);
         console.log("Item created", newItem); // Debug log
       }
+      setActiveStep(0);
     } catch (error) {
       console.error(error);
     }
@@ -221,7 +222,6 @@ export default function AddItem(props: any) {
       ...prevItemData,
       item: newItem._id,
     }));
-    setActiveStep(0);
   };
 
   const handleDistributorCreate = async () => {
