@@ -60,6 +60,7 @@ export default function CreateInventory(props: any) {
               margin="normal"
               value={inventoryName}
               onChange={handleInputChange}
+              autoComplete="off"
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
               <Button

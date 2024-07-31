@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -7,7 +12,6 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import EditIcon from "@mui/icons-material/Edit";
-import { fetchInventoryById } from "../../api/inventoryApi";
 import InventoryTable from "../../components/Inventory/InventoryTable";
 import DeleteInventory from "../../components/Inventory/DeleteInventory";
 import EditInventoryName from "../../components/Inventory/EditInventoryName";
@@ -16,15 +20,34 @@ import TakeInventory from "../../components/Inventory/TakeInventory";
 import { Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { fetchAllItemsShort } from "../../api/itemsApi";
 import { fetchAllArchives } from "../../api/archiveApi";
-import ArchivedTable from "../../components/Inventory/ArchivedTable";
 import Archive from "../../components/Inventory/Archive";
+import { useInventory } from "../../context/InventoryContext";
+import { useItems } from "../../context/ItemsContext";
+import { useDistributors } from "../../context/DistributorContext";
 
 export default function InventoryDetail() {
   const navigate = useNavigate();
   const params = useParams();
   // id of the current inventory
+  const inventoryContext = useInventory();
+  const itemsContext = useItems();
+  const distributorsContext = useDistributors();
+
+  if (!distributorsContext) {
+    throw new Error("useInventory must be used within a InventoryProvider");
+  }
+  if (!inventoryContext) {
+    throw new Error("useInventory must be used within a InventoryProvider");
+  }
+  if (!itemsContext) {
+    throw new Error("useItems must be used within a ItemsProvider");
+  }
+
+  const { currentInventory, getInventoryData } = inventoryContext;
+  const { itemDict } = itemsContext;
+  const { distributorsDict } = distributorsContext;
+  const tableData = currentInventory.items;
   const inventoryId = params.inventoryId;
 
   const [value, setValue] = useState("1");
@@ -32,27 +55,13 @@ export default function InventoryDetail() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [takeOpen, setTakeOpen] = useState(true);
-  const [currentInventory, setCurrentInventory] = useState<any>({});
-  const [archiveData, setArchiveData] = useState<any>(null);
 
-  const [inventoryItems, setInventoryItems] = useState<any>(null);
-  const [itemDict, setItemDict] = useState<any>(null);
+  const [archiveData, setArchiveData] = useState<any>(null);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const getInventoryData = async () => {
-    if (typeof inventoryId === "string") {
-      const inventory = await fetchInventoryById(inventoryId);
-      setCurrentInventory(inventory);
-      console.log("data has been fetched");
-    } else {
-      console.error("Inventory ID is undefined");
-      navigate("/inventory");
-    }
   };
 
   const getArchiveData = async () => {
@@ -75,25 +84,8 @@ export default function InventoryDetail() {
   };
 
   useEffect(() => {
-    getInventoryData();
     getArchiveData();
   }, [inventoryId]);
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      const items = await fetchAllItemsShort();
-      const dictionary = items.reduce((acc: any, item: any) => {
-        acc[item._id] = item.name;
-        return acc;
-      }, {});
-      setItemDict(dictionary);
-      setInventoryItems(currentInventory.items);
-    };
-
-    if (currentInventory) {
-      fetchItems();
-    }
-  }, [currentInventory]);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -106,6 +98,81 @@ export default function InventoryDetail() {
   if (archiveData) {
     console.log(archiveData[archiveData.length - 1]);
   }
+
+  type Item = {
+    _id: string;
+    item: string;
+    distributor: string;
+    unitOfMeasure: string;
+    qtyPerUnit: number;
+    par: number;
+    stock: number;
+  };
+
+  const columns = useMemo<MRT_ColumnDef<Item>[]>(
+    () => [
+      {
+        accessorFn: (row) => itemDict[row.item], // Return the value from itemDict
+        id: "item",
+        header: "Name",
+        size: 250,
+        sortingFn: (a, b) => {
+          const aValue = itemDict[a.original.item];
+          const bValue = itemDict[b.original.item];
+          return aValue.localeCompare(bValue); // Sort based on the value from itemDict
+        },
+        Cell: ({ row }) => (
+          <Link
+            to={`${row.original._id}`}
+            state={{ item: row.original.item }}
+            style={{
+              textDecoration: "none",
+              color: "black",
+            }}
+          >
+            {itemDict[row.original.item]}
+          </Link>
+        ),
+      },
+      {
+        accessorFn: (row) => distributorsDict[row.distributor], // Return the value from itemDict
+        id: "distributor",
+        header: "Distributor",
+        size: 100,
+        sortingFn: (a, b) => {
+          const aValue = distributorsDict[a.original.item] || "";
+          const bValue = distributorsDict[b.original.item] || "";
+          return aValue.localeCompare(bValue); // Sort based on the value from itemDict
+        },
+      },
+      {
+        accessorKey: "unitOfMeasure",
+        header: "Unit",
+        size: 50,
+      },
+      {
+        accessorKey: "qtyPerUnit",
+        header: "Qty/Unit",
+        size: 50,
+      },
+      {
+        accessorKey: "par",
+        header: "Par",
+        size: 50,
+      },
+      {
+        accessorKey: "stock",
+        header: "Stock",
+        size: 50,
+      },
+    ],
+    [itemDict]
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: tableData || [],
+  });
 
   return (
     <Container sx={{ padding: "8px" }}>
@@ -157,14 +224,15 @@ export default function InventoryDetail() {
           </TabList>
         </Box>
         <TabPanel value="1">
-          <InventoryTable inventoryItems={inventoryItems} itemDict={itemDict} />
+          {tableData.length > 0 && <MaterialReactTable table={table} />}
+          {/* <InventoryTable /> */}
           <Button onClick={handleAddItem}>Add Item</Button>
         </TabPanel>
         <TabPanel value="2">
           <TakeInventory
             open={takeOpen}
             setOpen={setTakeOpen}
-            inventoryItems={inventoryItems}
+            inventoryItems={currentInventory.items}
             itemDict={itemDict}
             inventoryName={currentInventory.inventoryName}
           />

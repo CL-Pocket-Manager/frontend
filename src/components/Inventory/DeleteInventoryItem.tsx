@@ -7,9 +7,16 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Typography } from "@mui/material";
 import { removeItemFromInventory } from "../../api/inventoryApi";
+import { useInventory } from "../../context/InventoryContext";
 
 export default function DeleteInventoryItem(props: any) {
   const { open, setOpen, itemId, inventoryId } = props;
+
+  const inventoryContext = useInventory();
+  if (!inventoryContext) {
+    throw new Error("useInventory must be used within a InventoryProvider");
+  }
+  const { getInventoryData } = inventoryContext;
 
   const navigate = useNavigate();
 
@@ -17,10 +24,12 @@ export default function DeleteInventoryItem(props: any) {
     setOpen(false);
   };
 
-  const handleDelete = (e: React.FormEvent) => {
+  const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      removeItemFromInventory(inventoryId, itemId);
+      await removeItemFromInventory(inventoryId, itemId);
+      getInventoryData(inventoryId);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

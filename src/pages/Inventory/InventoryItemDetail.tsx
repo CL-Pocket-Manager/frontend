@@ -52,6 +52,7 @@ export default function InventoryItemDetail() {
   const location = useLocation();
   // id of the item from the db
   const { item } = location.state;
+  console.log(itemId);
 
   const [itemDetail, setItemDetail] = useState<any>({});
   const [inventoryItem, setInventoryItem] = useState<any>({});
@@ -69,6 +70,7 @@ export default function InventoryItemDetail() {
           inventoryId,
           itemId
         );
+        console.log(fetchedInventoryItem);
         setInventoryItem(fetchedInventoryItem);
       }
     };
