@@ -20,13 +20,18 @@ import TakeInventory from "../../components/Inventory/TakeInventory";
 import { Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { TailSpin } from "react-loader-spinner";
 import { fetchAllArchives } from "../../api/archiveApi";
 import Archive from "../../components/Inventory/Archive";
 import { useInventory } from "../../context/InventoryContext";
 import { useItems } from "../../context/ItemsContext";
 import { useDistributors } from "../../context/DistributorContext";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function InventoryDetail() {
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const params = useParams();
   // id of the current inventory
@@ -43,12 +48,33 @@ export default function InventoryDetail() {
   if (!itemsContext) {
     throw new Error("useItems must be used within a ItemsProvider");
   }
-
   const { currentInventory, getInventoryData } = inventoryContext;
   const { itemDict } = itemsContext;
   const { distributorsDict } = distributorsContext;
-  const tableData = currentInventory.items;
-  const inventoryId = params.inventoryId;
+  const [loading, setLoading] = useState(true);
+
+  const inventoryId = params.inventoryId as string;
+
+  const [tableData, setTableData] = useState<any>([]);
+
+  const loadData = async () => {
+    if (!currentInventory.items) {
+      await getInventoryData(inventoryId);
+    }
+    const data = currentInventory.items;
+    if (data && Array.isArray(data)) {
+      setTableData(data);
+    } else {
+      setTableData([]); // Set to an empty array if data is undefined or not an array
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [currentInventory]);
 
   const [value, setValue] = useState("1");
   const [addItem, setAddItem] = useState(false);
@@ -175,93 +201,119 @@ export default function InventoryDetail() {
   });
 
   return (
-    <Container sx={{ padding: "8px" }}>
-      <Box display="flex" justifyContent="center" alignItems="center" m={2}>
-        <Button
-          onClick={() => navigate(-1)}
-          sx={{ position: "absolute", left: "1rem" }}
-        >
-          <ArrowBackIosNewIcon fontSize="small" />
-        </Button>
-        <Typography variant="h5">{currentInventory.inventoryName}</Typography>
+    <>
+      {loading ? (
+        <TailSpin
+          visible={true}
+          height="80"
+          width="80"
+          color="#556cd6"
+          ariaLabel="oval-loading"
+          wrapperStyle={{ position: "absolute", top: "50%", left: "50%" }}
+          wrapperClass=""
+        />
+      ) : (
+        <Container sx={{ padding: "8px" }}>
+          <Box display="flex" justifyContent="center" alignItems="center" m={2}>
+            <Button
+              onClick={() => navigate(-1)}
+              sx={{ position: "absolute", left: "1rem" }}
+            >
+              <ArrowBackIosNewIcon fontSize="small" />
+            </Button>
+            <Typography variant="h5">
+              {currentInventory.inventoryName}
+            </Typography>
 
-        <Button
-          onClick={handleClick}
-          sx={{ position: "absolute", right: "2rem" }}
-        >
-          <EditIcon
-            fontSize="small"
-            sx={{
-              marginLeft: "10px",
-              color: "primary.main",
-              cursor: "pointer",
-              "&:hover": {
-                color: "primary.dark",
-              },
-            }}
+            <Button
+              onClick={handleClick}
+              sx={{ position: "absolute", right: "2rem" }}
+            >
+              <EditIcon
+                fontSize="small"
+                sx={{
+                  marginLeft: "10px",
+                  color: "primary.main",
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "primary.dark",
+                  },
+                }}
+              />
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={() => setAnchorEl(null)}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem onClick={handleEdit}>Edit Inventory</MenuItem>
+              <MenuItem onClick={handleDelete}>Delete Inventory</MenuItem>
+            </Menu>
+          </Box>
+
+          <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <TabList
+                onChange={handleChange}
+                aria-label="lab API tabs example"
+              >
+                <Tab label="Items" value="1" />
+                <Tab
+                  label="Take Inventory"
+                  value="2"
+                  sx={{ marginLeft: "auto" }}
+                />
+                <Tab label="Archives" value="3" />
+              </TabList>
+            </Box>
+            <TabPanel value="1">
+              {mobile ? (
+                <InventoryTable />
+              ) : (
+                <MaterialReactTable table={table} />
+              )}
+              <Button onClick={handleAddItem}>Add Item</Button>
+            </TabPanel>
+            <TabPanel value="2">
+              <TakeInventory
+                open={takeOpen}
+                setOpen={setTakeOpen}
+                inventoryItems={currentInventory.items}
+                itemDict={itemDict}
+                inventoryName={currentInventory.inventoryName}
+              />
+            </TabPanel>
+            <TabPanel value="3">
+              {archiveData && (
+                <Archive itemDict={itemDict} archiveData={archiveData} />
+              )}
+            </TabPanel>
+          </TabContext>
+
+          <DeleteInventory
+            open={deleteOpen}
+            setOpen={setDeleteOpen}
+            inventoryId={currentInventory._id}
           />
-        </Button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={() => setAnchorEl(null)}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-        >
-          <MenuItem onClick={handleEdit}>Edit Inventory</MenuItem>
-          <MenuItem onClick={handleDelete}>Delete Inventory</MenuItem>
-        </Menu>
-      </Box>
-
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Items" value="1" />
-            <Tab label="Take Inventory" value="2" sx={{ marginLeft: "auto" }} />
-            <Tab label="Archives" value="3" />
-          </TabList>
-        </Box>
-        <TabPanel value="1">
-          {tableData.length > 0 && <MaterialReactTable table={table} />}
-          {/* <InventoryTable /> */}
-          <Button onClick={handleAddItem}>Add Item</Button>
-        </TabPanel>
-        <TabPanel value="2">
-          <TakeInventory
-            open={takeOpen}
-            setOpen={setTakeOpen}
-            inventoryItems={currentInventory.items}
-            itemDict={itemDict}
-            inventoryName={currentInventory.inventoryName}
+          <AddItem
+            open={addItem}
+            setOpen={setAddItem}
+            inventory={currentInventory}
+            getInventoryData={getInventoryData}
           />
-        </TabPanel>
-        <TabPanel value="3">
-          {archiveData && (
-            <Archive itemDict={itemDict} archiveData={archiveData} />
-          )}
-        </TabPanel>
-      </TabContext>
 
-      <DeleteInventory
-        open={deleteOpen}
-        setOpen={setDeleteOpen}
-        inventoryId={currentInventory._id}
-      />
-      <AddItem
-        open={addItem}
-        setOpen={setAddItem}
-        inventory={currentInventory}
-        getInventoryData={getInventoryData}
-      />
-
-      <EditInventoryName
-        open={editOpen}
-        setOpen={setEditOpen}
-        inventory={currentInventory}
-        getInventoryData={getInventoryData}
-      />
-    </Container>
+          <EditInventoryName
+            open={editOpen}
+            setOpen={setEditOpen}
+            inventory={currentInventory}
+            getInventoryData={getInventoryData}
+          />
+        </Container>
+      )}
+    </>
   );
 }
