@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { fetchAllInventories } from "../../api/inventoryApi";
 import { useNavigate } from "react-router-dom";
 import Typorgraphy from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -10,6 +9,8 @@ import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import { styled } from "@mui/material/styles";
 import CreateInventory from "../../components/Inventory/CreateInventory";
+import { useInventory } from "../../context/InventoryContext";
+import { useItems } from "../../context/ItemsContext";
 
 const Item = styled(Paper)(({ theme }) => ({
   background: theme.palette.background.default,
@@ -20,27 +21,35 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function InventorySelect() {
-  const navigate = useNavigate();
-  const [inventoryList, setInventoryList] = useState<any[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Get Inventories
-  const getInventories = async () => {
-    const inventories = await fetchAllInventories();
-    setInventoryList(inventories);
-  };
+  const InventoryContext = useInventory();
+  if (!InventoryContext) {
+    throw new Error("useInventory must be used within a InventoryProvider");
+  }
+  const { inventoryList, fetchInventories, getInventoryData } =
+    InventoryContext;
 
-  useEffect(() => {
-    const fetchInventories = async () => {
-      await getInventories();
-    };
-
-    fetchInventories();
-  }, []);
+  const ItemsContext = useItems();
+  if (!ItemsContext) {
+    throw new Error("useItems must be used within a ItemsProvider");
+  }
+  const { fetchItems } = ItemsContext;
 
   if (!inventoryList) {
     return <div>Loading...</div>;
   }
+
+  useEffect(() => {
+    fetchItems();
+    fetchInventories();
+  }, []);
+
+  const handleClicked = (id: string) => () => {
+    getInventoryData(id);
+    navigate(`/inventory/${id}`);
+  };
 
   return (
     <Container>
@@ -55,8 +64,9 @@ export default function InventorySelect() {
             {inventoryList.map((inventory) => (
               <Link
                 key={inventory._id}
-                component="button" // Change this to 'button' to make it clickable without href
-                onClick={() => navigate(`/inventory/${inventory._id}`)} // Use navigate here underline="none"
+                component="button"
+                onClick={handleClicked(inventory._id)}
+                underline="none"
               >
                 <Item>{inventory.inventoryName}</Item>
               </Link>

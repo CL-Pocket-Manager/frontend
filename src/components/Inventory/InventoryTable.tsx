@@ -10,20 +10,34 @@ import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Typography } from "@mui/material";
+import { useInventory } from "../../context/InventoryContext";
+import { useItems } from "../../context/ItemsContext";
+import { useParams } from "react-router-dom";
 
-export default function InventoryTable(props: any) {
-  const { inventoryItems, itemDict } = props;
-
+export default function InventoryTable() {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const params = useParams();
+  const inventoryId = params.inventoryId;
 
-  if (inventoryItems === undefined) {
-    return <div>Loading...</div>;
+  const inventoryContext = useInventory();
+  const itemsContext = useItems();
+  if (!inventoryContext) {
+    throw new Error("useInventory must be used within a InventoryProvider");
+  }
+  if (!itemsContext) {
+    throw new Error("useItems must be used within a ItemsProvider");
+  }
+  const { currentInventory, getInventoryData } = inventoryContext;
+  const { itemDict } = itemsContext;
+
+  if (inventoryId && currentInventory.items === undefined) {
+    getInventoryData(inventoryId);
   }
 
   return (
     <>
-      {inventoryItems &&
+      {currentInventory.items &&
         (mobile ? (
           <Box display="flex" flexDirection="column" alignItems="flex-start">
             <TableContainer component={Paper}>
@@ -41,7 +55,7 @@ export default function InventoryTable(props: any) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {inventoryItems.map((item: any) => (
+                  {currentInventory.items.map((item: any) => (
                     <TableRow key={item._id}>
                       <>
                         <TableCell>
@@ -95,7 +109,7 @@ export default function InventoryTable(props: any) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {inventoryItems.map((item: any) => (
+                  {currentInventory.items.map((item: any) => (
                     <TableRow key={item._id}>
                       <>
                         <TableCell align="left">

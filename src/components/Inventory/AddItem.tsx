@@ -190,9 +190,12 @@ export default function AddItem(props: any) {
     e.preventDefault();
     try {
       console.log(itemData);
-      addItemToInventory(inventory._id, itemData);
+      if (!inventory || !inventory._id) {
+        throw new Error("Inventory ID is undefined");
+      }
+      await addItemToInventory(inventory._id, itemData);
       console.log("Item added to inventory");
-      await getInventoryData();
+      getInventoryData(inventory._id);
       window.location.reload();
     } catch (error) {
       console.error(error);

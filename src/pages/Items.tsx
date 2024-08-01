@@ -29,6 +29,7 @@ export default function Items() {
     const fetchItems = async () => {
       const fetchedData = await fetchAllItems(); // Assume fetchData is your method to fetch items
       setItems(fetchedData); // Updating state will cause a re-render
+      console.log(items);
     };
 
     fetchItems();
@@ -49,12 +50,25 @@ export default function Items() {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell sx={{ fontWeight: 600, width: 60 }}> </TableCell>
               <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>Item Type</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {items.map((item: any) => (
               <TableRow key={item._id}>
+                <TableCell style={{ padding: 8 }}>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </TableCell>
                 <TableCell component="th" scope="row">
                   <Link
                     to={`/items/${item._id}`}
@@ -67,6 +81,9 @@ export default function Items() {
                       {item.name}
                     </Typography>
                   </Link>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body1">{item.itemType}</Typography>
                 </TableCell>
               </TableRow>
             ))}

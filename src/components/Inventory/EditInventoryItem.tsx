@@ -99,6 +99,16 @@ export default function EditInventoryItem(props: any) {
             margin="normal"
             variant="outlined"
           />
+          <TextField
+            label="Stock"
+            name="stock"
+            value={inventoryItemData.stock}
+            onChange={handleChange}
+            type="number"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+          />
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button type="submit">Update</Button>
         </form>

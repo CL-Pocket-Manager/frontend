@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,14 +8,12 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
-import Typography from "@mui/material/Typography";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { createArchive } from "../../api/archiveApi";
 
 export default function TakeInventory(props: any) {
