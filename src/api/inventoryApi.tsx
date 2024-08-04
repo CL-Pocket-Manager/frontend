@@ -40,6 +40,19 @@ export const updateInventoryName = async (
   return data;
 };
 
+// Update Inventory Items
+export const updateInventoryItems = async (inventoryId: string, items: any) => {
+  const res = await fetch(`${BASE_URL}/inventory/${inventoryId}/update-items`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ items }),
+  });
+  const data = await res.json();
+  return data;
+};
+
 // Get All Inventories
 export const fetchAllInventories = async () => {
   const res = await fetch(`${BASE_URL}/inventory/all`);

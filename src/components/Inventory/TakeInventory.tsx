@@ -10,29 +10,46 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { createArchive } from "../../api/archiveApi";
+import { createArchive, fetchAllArchives } from "../../api/archiveApi";
+import { updateInventoryItems } from "../../api/inventoryApi";
+import ReportTable from "../../utils/ReportTable";
 
 export default function TakeInventory(props: any) {
-  const { inventoryItems, inventoryName, itemDict } = props;
+  const { itemDict, currentInventory } = props;
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  const [open, setOpen] = useState(false);
+  const [fetchComplete, setFetchComplete] = useState(false);
+
+  const inventoryId = currentInventory._id;
+  const inventoryItems = currentInventory.items;
+  const inventoryName = currentInventory.inventoryName;
+  const [archiveData, setArchiveData] = useState<any>(null);
+
   const [items, setItems] = useState<any>(null);
 
+  const resetStock = () => {
+    if (inventoryItems) {
+      const reSetItems = inventoryItems.map((item: any) => ({
+        ...item,
+        stock: 0,
+      }));
+      setItems(reSetItems);
+    }
+  };
+
   useEffect(() => {
-    const resetStock = () => {
-      if (inventoryItems) {
-        const reSetItems = inventoryItems.map((item: any) => ({
-          ...item,
-          stock: 0,
-        }));
-        setItems(reSetItems);
-      }
-    };
     resetStock();
   }, [inventoryItems]);
 
@@ -56,15 +73,26 @@ export default function TakeInventory(props: any) {
     setItems(updatedItems);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setOpen(true);
+
     const archiveData = {
       inventoryName,
       items,
     };
+
+    console.log(items);
     // Create Archive
-    createArchive(archiveData);
-    console.log(archiveData);
+    await createArchive(archiveData);
+    // Update Stock values
+    await updateInventoryItems(inventoryId, items);
+
+    const archives = await fetchAllArchives(inventoryName);
+    setArchiveData(archives);
+    console.log(archives);
+    setFetchComplete(true);
     console.log("Inventory submitted");
+    resetStock();
   };
 
   return (
@@ -214,6 +242,32 @@ export default function TakeInventory(props: any) {
       >
         Submit
       </Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Inventory Submitted</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Inventory has been submitted successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+          {fetchComplete && (
+            <PDFDownloadLink
+              document={
+                <ReportTable
+                  data={archiveData[archiveData.length - 1]}
+                  itemDict={itemDict}
+                />
+              }
+              fileName={`Thief_${inventoryName}_${
+                archiveData[archiveData.length - 1].archiveDate.split("T")[0]
+              }.pdf`}
+            >
+              <Button>Download</Button>{" "}
+            </PDFDownloadLink>
+          )}
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

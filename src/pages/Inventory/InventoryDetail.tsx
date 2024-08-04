@@ -67,6 +67,8 @@ export default function InventoryDetail() {
     } else {
       setTableData([]); // Set to an empty array if data is undefined or not an array
     }
+    const archive = await fetchAllArchives(currentInventory.inventoryName);
+    setArchiveData(archive);
     setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -80,7 +82,6 @@ export default function InventoryDetail() {
   const [addItem, setAddItem] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [takeOpen, setTakeOpen] = useState(true);
 
   const [archiveData, setArchiveData] = useState<any>(null);
 
@@ -88,11 +89,6 @@ export default function InventoryDetail() {
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const getArchiveData = async () => {
-    const archive = await fetchAllArchives();
-    setArchiveData(archive);
   };
 
   const handleAddItem = () => {
@@ -108,10 +104,6 @@ export default function InventoryDetail() {
     setEditOpen(true);
     setAnchorEl(null);
   };
-
-  useEffect(() => {
-    getArchiveData();
-  }, [inventoryId]);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -280,11 +272,9 @@ export default function InventoryDetail() {
             </TabPanel>
             <TabPanel value="2">
               <TakeInventory
-                open={takeOpen}
-                setOpen={setTakeOpen}
-                inventoryItems={currentInventory.items}
+                currentInventory={currentInventory}
                 itemDict={itemDict}
-                inventoryName={currentInventory.inventoryName}
+                loadData={loadData}
               />
             </TabPanel>
             <TabPanel value="3">

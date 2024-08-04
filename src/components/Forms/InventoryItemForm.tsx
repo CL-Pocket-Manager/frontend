@@ -152,6 +152,7 @@ export default function InventoryItemForm(props: any) {
               <MenuItem value="Each">Each</MenuItem>
               <MenuItem value="Case">Case</MenuItem>
               <MenuItem value="Liter">Liter</MenuItem>
+              <MenuItem value="Keg">Keg</MenuItem>
             </Select>
           </FormControl>
         </div>

@@ -1,8 +1,12 @@
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // Get all Archives
-export const fetchAllArchives = async () => {
-  const res = await fetch(`${BASE_URL}/archive/all`);
+export const fetchAllArchives = async (inventoryName?: string) => {
+  const url = new URL(`${BASE_URL}/archive/all`);
+  if (inventoryName) {
+    url.searchParams.append("inventoryName", inventoryName);
+  }
+  const res = await fetch(url.toString());
   const data = await res.json();
   return data;
 };
