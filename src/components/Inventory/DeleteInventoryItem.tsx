@@ -29,7 +29,6 @@ export default function DeleteInventoryItem(props: any) {
     try {
       await removeItemFromInventory(inventoryId, itemId);
       getInventoryData(inventoryId);
-      window.location.reload();
     } catch (error) {
       console.error(error);
     }

@@ -38,7 +38,6 @@ export default function CreateItem(props: any) {
       createItem(itemData);
       setOpen(false);
     }
-    window.location.reload();
   };
 
   return (
