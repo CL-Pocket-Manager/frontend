@@ -66,6 +66,8 @@ export default function EditInventoryItem(props: any) {
             >
               <MenuItem value="Each">Each</MenuItem>
               <MenuItem value="Case">Case</MenuItem>
+              <MenuItem value="Liter">Liter</MenuItem>
+              <MenuItem value="Keg">Keg</MenuItem>
             </Select>
           </FormControl>
           <TextField

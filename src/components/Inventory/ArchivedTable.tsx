@@ -11,12 +11,17 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ReportTable from "../../utils/ReportTable";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function ArchivedTable(props: any) {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
   const { archive, itemDict } = props;
+
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const shortDate = new Date(archive.archiveDate)
     .toLocaleDateString("en-US", {
@@ -37,24 +42,28 @@ export default function ArchivedTable(props: any) {
         })}
       </Typography>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={handleOpen}>View Details</Button>
+        {!mobile && <Button onClick={handleOpen}>View Details</Button>}
         <PDFDownloadLink
           document={<ReportTable data={archive} itemDict={itemDict} />}
-          fileName={`Bk_Food_${shortDate}.pdf`}
+          fileName={`Theif_${archive.inventoryName}_${shortDate}.pdf`}
         >
           <Button>Download</Button>
         </PDFDownloadLink>
       </div>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell sx={{ fontWeight: 600 }}>Item</TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Unit
-            </TableCell>
-            <TableCell sx={{ fontWeight: 600 }} align="right">
-              Qty/Unit
-            </TableCell>
+            {!mobile && (
+              <>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Par
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Stock
+                </TableCell>
+              </>
+            )}
             <TableCell sx={{ fontWeight: 600 }} align="right">
               Need
             </TableCell>
@@ -71,8 +80,12 @@ export default function ArchivedTable(props: any) {
                   <TableCell component="th" scope="row">
                     {itemDict[item.item]}
                   </TableCell>
-                  <TableCell align="right">{item.unitOfMeasure}</TableCell>
-                  <TableCell align="right">{item.qtyPerUnit}</TableCell>
+                  {!mobile && (
+                    <>
+                      <TableCell align="right">{item.par}</TableCell>
+                      <TableCell align="right">{item.stock}</TableCell>
+                    </>
+                  )}
                   <TableCell align="right">{item.par - item.stock}</TableCell>
                 </TableRow>
               )

@@ -190,6 +190,7 @@ export default function InventoryDetail() {
   const table = useMaterialReactTable({
     columns,
     data: tableData || [],
+    enablePagination: false,
   });
 
   return (
