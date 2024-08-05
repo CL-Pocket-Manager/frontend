@@ -28,24 +28,27 @@ const ReportTable = (props: { data: any; itemDict: any }) => {
               }}
             >
               <TD>Item</TD>
-              <TD>Unit</TD>
-              <TD>Qty/Unit</TD>
+              <TD>Par</TD>
               <TD>Stock</TD>
+              <TD>Need</TD>
             </TH>
-            {data.items.map((item: any, index: number) => (
-              <TR
-                key={item._id}
-                style={{
-                  backgroundColor: index % 2 === 0 ? "#ddd" : "#fff",
-                  fontSize: 12,
-                }}
-              >
-                <TD>{itemDict[item.item]}</TD>
-                <TD>{item.unitOfMeasure}</TD>
-                <TD>{item.qtyPerUnit}</TD>
-                <TD>{item.stock}</TD>
-              </TR>
-            ))}
+            {data.items.map(
+              (item: any, index: number) =>
+                item.stock < item.par && (
+                  <TR
+                    key={item._id}
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "#ddd" : "#fff",
+                      fontSize: 12,
+                    }}
+                  >
+                    <TD>{itemDict[item.item]}</TD>
+                    <TD>{item.par}</TD>
+                    <TD>{item.stock}</TD>
+                    <TD>{item.par - item.stock}</TD>
+                  </TR>
+                )
+            )}
           </Table>
         </View>
       </Page>
