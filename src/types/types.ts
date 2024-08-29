@@ -14,7 +14,7 @@ export interface InventoryItem {
 export interface Archive {
   inventoryName: string;
   items: InventoryItem[];
-  archiveDate: Date;
+  archiveDate?: Date;
 }
 
 export type currentInventory = {
