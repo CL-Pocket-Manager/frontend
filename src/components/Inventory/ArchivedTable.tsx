@@ -57,6 +57,12 @@ export default function ArchivedTable(props: any) {
             {!mobile && (
               <>
                 <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Unit
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
+                  Qty / Unit
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600 }} align="right">
                   Par
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600 }} align="right">
@@ -72,7 +78,7 @@ export default function ArchivedTable(props: any) {
         <TableBody>
           {archive.items.map(
             (item: any) =>
-              item.stock < item.par && (
+              item.stock < item.par * item.qtyPerUnit && (
                 <TableRow
                   key={item._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -82,11 +88,15 @@ export default function ArchivedTable(props: any) {
                   </TableCell>
                   {!mobile && (
                     <>
+                      <TableCell align="right">{item.unitOfMeasure}</TableCell>
+                      <TableCell align="right">{item.qtyPerUnit}</TableCell>
                       <TableCell align="right">{item.par}</TableCell>
                       <TableCell align="right">{item.stock}</TableCell>
                     </>
                   )}
-                  <TableCell align="right">{item.par - item.stock}</TableCell>
+                  <TableCell align="right">
+                    {item.par * item.qtyPerUnit - item.stock}
+                  </TableCell>
                 </TableRow>
               )
           )}

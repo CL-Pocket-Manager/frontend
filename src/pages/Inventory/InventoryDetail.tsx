@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLoaderData } from "react-router-dom";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -28,13 +28,12 @@ import { useItems } from "../../context/ItemsContext";
 import { useDistributors } from "../../context/DistributorContext";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { currentInventory, InventoryItem } from "../../types/types";
 
 export default function InventoryDetail() {
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
-  const params = useParams();
-  // id of the current inventory
   const inventoryContext = useInventory();
   const itemsContext = useItems();
   const distributorsContext = useDistributors();
@@ -48,19 +47,20 @@ export default function InventoryDetail() {
   if (!itemsContext) {
     throw new Error("useItems must be used within a ItemsProvider");
   }
-  const { currentInventory, getInventoryData } = inventoryContext;
+  const { getInventoryData } = inventoryContext;
+
+  const currentInventory = useLoaderData() as currentInventory;
+
   const { itemDict } = itemsContext;
   const { distributorsDict } = distributorsContext;
   const [loading, setLoading] = useState(true);
 
-  const inventoryId = params.inventoryId as string;
-
   const [tableData, setTableData] = useState<any>([]);
 
   const loadData = async () => {
-    if (!currentInventory.items) {
-      await getInventoryData(inventoryId);
-    }
+    // if (!currentInventory.items) {
+    //   await getInventoryData(inventoryId);
+    // }
     const data = currentInventory.items;
     if (data && Array.isArray(data)) {
       setTableData(data);
@@ -109,25 +109,11 @@ export default function InventoryDetail() {
     setValue(newValue);
   };
 
-  if (!currentInventory) {
-    return <div>Loading...</div>;
-  }
-
   if (archiveData) {
     console.log(archiveData[archiveData.length - 1]);
   }
 
-  type Item = {
-    _id: string;
-    item: string;
-    distributor: string;
-    unitOfMeasure: string;
-    qtyPerUnit: number;
-    par: number;
-    stock: number;
-  };
-
-  const columns = useMemo<MRT_ColumnDef<Item>[]>(
+  const columns = useMemo<MRT_ColumnDef<InventoryItem>[]>(
     () => [
       {
         accessorFn: (row) => itemDict[row.item], // Return the value from itemDict
@@ -267,7 +253,7 @@ export default function InventoryDetail() {
               {mobile ? (
                 <InventoryTable />
               ) : (
-                <MaterialReactTable table={table} />
+                table && <MaterialReactTable table={table} />
               )}
               <Button onClick={handleAddItem}>Add Item</Button>
             </TabPanel>
@@ -294,7 +280,6 @@ export default function InventoryDetail() {
             open={addItem}
             setOpen={setAddItem}
             inventory={currentInventory}
-            getInventoryData={getInventoryData}
           />
 
           <EditInventoryName

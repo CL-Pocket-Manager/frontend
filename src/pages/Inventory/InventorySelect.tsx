@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import Typorgraphy from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -9,8 +9,6 @@ import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import { styled } from "@mui/material/styles";
 import CreateInventory from "../../components/Inventory/CreateInventory";
-import { useInventory } from "../../context/InventoryContext";
-import { useItems } from "../../context/ItemsContext";
 
 const Item = styled(Paper)(({ theme }) => ({
   background: theme.palette.background.default,
@@ -20,40 +18,26 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+type InventoryItem = {
+  _id: string;
+  inventoryName: string;
+};
+
 export default function InventorySelect() {
   const [createOpen, setCreateOpen] = useState(false);
   const navigate = useNavigate();
 
-  const InventoryContext = useInventory();
-  if (!InventoryContext) {
-    throw new Error("useInventory must be used within a InventoryProvider");
-  }
-  const { inventoryList, fetchInventories, getInventoryData } =
-    InventoryContext;
-
-  const ItemsContext = useItems();
-  if (!ItemsContext) {
-    throw new Error("useItems must be used within a ItemsProvider");
-  }
-  const { fetchItems } = ItemsContext;
-
-  if (!inventoryList) {
-    return <div>Loading...</div>;
-  }
-
-  useEffect(() => {
-    fetchItems();
-    fetchInventories();
-  }, []);
+  const inventoryList = useLoaderData() as InventoryItem[];
 
   const handleClicked = (id: string) => () => {
-    getInventoryData(id);
     navigate(`/inventory/${id}`);
   };
 
+  console.log(inventoryList);
+
   return (
     <Container>
-      {inventoryList?.length > 0 ? (
+      {inventoryList.length > 0 ? (
         <Box
           display="flex"
           alignItems="center"

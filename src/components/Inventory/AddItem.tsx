@@ -17,12 +17,14 @@ import InventoryItemForm from "../Forms/InventoryItemForm";
 import ItemForm from "../Forms/ItemForm";
 import DistributorForm from "../Forms/DistributorForm";
 import { Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function AddItem(props: any) {
-  const { open, setOpen, inventory, getInventoryData } = props;
+  const { open, setOpen, inventory } = props;
   const [activeStep, setActiveStep] = useState(0);
   const [allItems, setAllItems] = useState<BaseItem[]>([]);
   const [allDistributors, setAllDistributors] = useState<BaseItem[]>([]);
+  const navigate = useNavigate();
 
   let newItem: any = null;
   let newDistributor: any = null;
@@ -195,7 +197,7 @@ export default function AddItem(props: any) {
       }
       await addItemToInventory(inventory._id, itemData);
       console.log("Item added to inventory");
-      getInventoryData(inventory._id);
+      navigate(0);
     } catch (error) {
       console.error(error);
     }

@@ -18,6 +18,7 @@ export const fetchAllItemsShort = async () => {
 export const fetchItemById = async (id: string) => {
   const res = await fetch(`${BASE_URL}/items/${id}`);
   const data = await res.json();
+  console.log(data);
   return data;
 };
 

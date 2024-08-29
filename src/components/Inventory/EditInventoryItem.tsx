@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { Typography } from "@mui/material";
 import { updateItemInInventory } from "../../api/inventoryApi";
+import { useNavigate } from "react-router-dom";
 
 export default function EditInventoryItem(props: any) {
   const {
@@ -18,6 +19,8 @@ export default function EditInventoryItem(props: any) {
     inventoryItemData,
     setInventoryItemData,
   } = props;
+
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setOpen(false);
@@ -43,6 +46,7 @@ export default function EditInventoryItem(props: any) {
     try {
       // Call API to update inventory item
       updateItemInInventory(inventory, inventoryItemData);
+      navigate(0);
       console.log("Inventory item updated");
     } catch (error) {
       console.error(error);

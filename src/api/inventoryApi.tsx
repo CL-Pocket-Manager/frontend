@@ -1,3 +1,5 @@
+import { InventoryItem } from "../types/types";
+
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // INVENTORIES //
@@ -41,7 +43,10 @@ export const updateInventoryName = async (
 };
 
 // Update Inventory Items
-export const updateInventoryItems = async (inventoryId: string, items: any) => {
+export const updateInventoryItems = async (
+  inventoryId: string,
+  items: InventoryItem[]
+) => {
   const res = await fetch(`${BASE_URL}/inventory/${inventoryId}/update-items`, {
     method: "PUT",
     headers: {
@@ -92,6 +97,7 @@ export const getItemFromInventory = async (
     `${BASE_URL}/inventory/${inventoryId}/items/${itemId}`
   );
   const data = await res.json();
+  console.log(data);
   return data;
 };
 

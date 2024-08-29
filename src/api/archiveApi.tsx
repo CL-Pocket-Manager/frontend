@@ -1,3 +1,5 @@
+import { Archive } from "../types/types";
+
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // Get all Archives
@@ -12,7 +14,7 @@ export const fetchAllArchives = async (inventoryName?: string) => {
 };
 
 // Create Archive
-export const createArchive = async (archiveData: any) => {
+export const createArchive = async (archiveData: Archive) => {
   if (!archiveData.inventoryName) {
     throw new Error("inventoryName is required");
   }

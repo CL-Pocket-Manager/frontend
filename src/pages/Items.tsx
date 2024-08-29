@@ -1,8 +1,7 @@
 import { Button, Container } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateItem from "../components/Items/CreateItem";
-import { fetchAllItems } from "../api/itemsApi";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,27 +12,18 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
+import { Item } from "../types/types";
 
 export default function Items() {
-  const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
+  const items = useLoaderData() as Item[];
 
   const handleOpen = () => {
     setOpen(true);
   };
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      const fetchedData = await fetchAllItems(); // Assume fetchData is your method to fetch items
-      setItems(fetchedData); // Updating state will cause a re-render
-      console.log(items);
-    };
-
-    fetchItems();
-  }, [open]); // Dependency array, re-run effect if `open` changes
 
   return (
     <Container>

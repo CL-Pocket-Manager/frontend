@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { createInventory } from "../../api/inventoryApi";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute" as "absolute",
@@ -23,6 +24,7 @@ export default function CreateInventory(props: any) {
   const { open, setOpen } = props;
   const [inventoryName, setInventoryName] = useState("");
   const handleClose = () => setOpen(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInventoryName(e.target.value);
@@ -35,6 +37,7 @@ export default function CreateInventory(props: any) {
     if (!newInventory) {
       console.error("Error creating inventory");
     }
+    navigate(`/inventory/${newInventory._id}`);
     setOpen(false);
   };
 

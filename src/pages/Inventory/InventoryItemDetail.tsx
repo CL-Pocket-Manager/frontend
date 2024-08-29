@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { fetchItemById } from "../../api/itemsApi";
-import { getItemFromInventory } from "../../api/inventoryApi";
+import React, { useState } from "react";
+import { useParams, useNavigate, useLoaderData } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -20,6 +18,7 @@ import EditInventoryItem from "../../components/Inventory/EditInventoryItem";
 import DeleteInventoryItem from "../../components/Inventory/DeleteInventoryItem";
 import Button from "@mui/material/Button";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Item, InventoryItem, AlcoholItem } from "../../types/types";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -41,6 +40,13 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 export default function InventoryItemDetail() {
   const [expanded, setExpanded] = React.useState(false);
+  const { itemDetail, inventoryItem } = useLoaderData() as {
+    itemDetail: Item;
+    inventoryItem: InventoryItem;
+  };
+
+  const [inventoryItemData, setInventoryItemData] =
+    useState<InventoryItem>(inventoryItem);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -49,33 +55,8 @@ export default function InventoryItemDetail() {
   // id of the item from the current inventory
   const itemId = params.itemId;
 
-  const location = useLocation();
-  // id of the item from the db
-  const { item } = location.state;
-  console.log(itemId);
-
-  const [itemDetail, setItemDetail] = useState<any>({});
-  const [inventoryItem, setInventoryItem] = useState<any>({});
-
   const [editMode, setEditMode] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (inventoryId && itemId) {
-        // Fetch item data
-        const fetchedItem = await fetchItemById(item);
-        setItemDetail(fetchedItem);
-        const fetchedInventoryItem = await getItemFromInventory(
-          inventoryId,
-          itemId
-        );
-        console.log(fetchedInventoryItem);
-        setInventoryItem(fetchedInventoryItem);
-      }
-    };
-    fetchData();
-  }, [item]);
 
   const handleEdit = () => {
     setEditMode(true);
@@ -180,14 +161,14 @@ export default function InventoryItemDetail() {
                   color="text.secondary"
                   sx={{ fontWeight: 600 }}
                 >
-                  {itemDetail.alcoholType}
+                  {(itemDetail as AlcoholItem).alcoholType}
                 </Typography>
                 <Typography
                   variant="body1"
                   color="text.secondary"
                   sx={{ fontWeight: 600 }}
                 >
-                  {itemDetail.alcoholContent}%
+                  {(itemDetail as AlcoholItem).alcoholContent}%
                 </Typography>
               </div>
             )}
@@ -218,8 +199,8 @@ export default function InventoryItemDetail() {
           setOpen={setEditMode}
           name={itemDetail.name}
           inventory={inventoryId}
-          inventoryItemData={inventoryItem}
-          setInventoryItemData={setInventoryItem}
+          inventoryItemData={inventoryItemData}
+          setInventoryItemData={setInventoryItemData}
         />
         <DeleteInventoryItem
           open={deleteMode}

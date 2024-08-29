@@ -1,3 +1,5 @@
+import { Distributor } from "../types/types";
+
 const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 
 // Get all Distributors
@@ -8,7 +10,7 @@ export const fetchAllDistributors = async () => {
 };
 
 // Create Distributor
-export const createDistributor = async (distributorData: any) => {
+export const createDistributor = async (distributorData: Distributor) => {
   const res = await fetch(`${BASE_URL}/distributor/create`, {
     method: "POST",
     headers: {
